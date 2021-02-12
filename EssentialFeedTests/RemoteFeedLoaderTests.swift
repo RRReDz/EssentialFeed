@@ -65,14 +65,11 @@ class RemoteFeedLoaderTests: XCTestCase {
         let statusCodes = [199, 201, 300, 400, 500]
         
         statusCodes.enumerated().forEach { index, statusCode in
-            var capturedErrors: [RemoteFeedLoader.Error] = []
-            sut.load { capturedErrors.append($0) }
-            
-            // When
-            client.complete(withStatusCode: statusCode, at: index)
-            
             // Then
-            XCTAssertEqual(capturedErrors, [.invalidData])
+            expect(sut, toGet: .invalidData, onAction: {
+                // When
+                client.complete(withStatusCode: statusCode, at: index)
+            })
         }
     }
     
@@ -80,6 +77,13 @@ class RemoteFeedLoaderTests: XCTestCase {
         let client = HTTPClientSpy()
         let sut = RemoteFeedLoader(client: client, url: url)
         return (sut: sut, client: client)
+    }
+    
+    private func expect(_ sut: RemoteFeedLoader, toGet error: RemoteFeedLoader.Error, onAction action: () -> Void) {
+        var capturedErrors: [RemoteFeedLoader.Error] = []
+        sut.load { capturedErrors.append($0) }
+        action()
+        XCTAssertEqual(capturedErrors, [error])
     }
     
     private class HTTPClientSpy: HTTPClient {
