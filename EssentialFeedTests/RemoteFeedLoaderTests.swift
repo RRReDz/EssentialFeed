@@ -59,6 +59,25 @@ class RemoteFeedLoaderTests: XCTestCase {
         XCTAssertEqual(capturedErrors, [.connectivity])
     }
     
+    func test_load_deliversErrorOnClientNon200HTTPResponse() {
+        // Given
+        let (sut, client) = makeSUT()
+        var capturedErrors: [RemoteFeedLoader.Error] = []
+        
+        // When
+        sut.load { capturedErrors.append($0) }
+        let statusCode = 400
+        let httpResponse = HTTPURLResponse(
+            url: client.requestedURLs[0],
+            statusCode: statusCode,
+            httpVersion: nil,
+            headerFields: nil)!
+        client.complete(with: httpResponse)
+        
+        // Then
+        XCTAssertEqual(capturedErrors, [.invalidData])
+    }
+    
     private func makeSUT(url: URL = URL(string: "http://another-fantastic-awesome-url.com")!) -> (sut: RemoteFeedLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteFeedLoader(client: client, url: url)
@@ -70,14 +89,18 @@ class RemoteFeedLoaderTests: XCTestCase {
         
         var requestedURLs: [URL] { self.messages.map{$0.url} }
         
-        var messages: [(url: URL, completion: (Error) -> Void)] = []
+        var messages: [(url: URL, completion: (HTTPClientResponse) -> Void)] = []
         
-        func get(from url: URL, completion: @escaping (Error) -> Void) {
+        func get(from url: URL, completion: @escaping (HTTPClientResponse) -> Void) {
             self.messages.append((url: url, completion: completion))
         }
         
         func complete(with error: Error, at index: Int = 0) {
-            messages[index].completion(error)
+            messages[index].completion(.failure(error))
+        }
+        
+        func complete(with httpResponse: HTTPURLResponse, at index: Int = 0) {
+            messages[index].completion(.success(httpResponse))
         }
     }
 }
