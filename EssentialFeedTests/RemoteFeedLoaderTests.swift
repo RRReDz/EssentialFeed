@@ -147,14 +147,14 @@ class RemoteFeedLoaderTests: XCTestCase {
             "image": feedItems[3].imageURL.description
         ]
         
-        let itemsArray = [
+        let items = [
             "items": [item1, item2, item3, item4]
         ]
         
         // When
         expect(sut, toGet: .success(feedItems), onAction: {
             // Then
-            let JSONData = try! JSONSerialization.data(withJSONObject: itemsArray)
+            let JSONData = try! JSONSerialization.data(withJSONObject: items)
             client.complete(withStatusCode: 200, and: JSONData)
         })
     }
