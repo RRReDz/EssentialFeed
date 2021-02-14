@@ -99,62 +99,39 @@ class RemoteFeedLoaderTests: XCTestCase {
         // Given
         let (sut, client) = makeSUT()
         
-        let feedItems: [FeedItem] = [
-            FeedItem(
-                id: UUID(),
-                description: "My first feed item",
-                location: "My first item location",
-                imageURL: URL(string: "http://my-first-feed-url.com")!
-            ),
-            FeedItem(
-                id: UUID(),
-                description: nil,
-                location: "My second item location",
-                imageURL: URL(string: "http://my-second-feed-url.com")!
-            ),
-            FeedItem(
-                id: UUID(),
-                description: "My third item description",
-                location: nil,
-                imageURL: URL(string: "http://my-third-feed-url.com")!
-            ),
-            FeedItem(
-                id: UUID(),
-                description: nil,
-                location: nil,
-                imageURL: URL(string: "http://my-fourth-feed-url.com")!
-            )
-        ]
+        let item1 = makeItem(
+            id: UUID(),
+            description: "My first feed item",
+            location: "My first item location",
+            imageURL: URL(string: "http://my-first-feed-url.com")!)
         
-        let item1 = [
-            "id": feedItems[0].id.description,
-            "description": feedItems[0].description!,
-            "location": feedItems[0].location!,
-            "image": feedItems[0].imageURL.description
-        ]
-        let item2 = [
-            "id": feedItems[1].id.description,
-            "location": feedItems[1].location!,
-            "image": feedItems[1].imageURL.description
-        ]
-        let item3 = [
-            "id": feedItems[2].id.description,
-            "description": feedItems[2].description!,
-            "image": feedItems[2].imageURL.description
-        ]
-        let item4 = [
-            "id": feedItems[3].id.description,
-            "image": feedItems[3].imageURL.description
-        ]
+        let item2 = makeItem(
+            id: UUID(),
+            description: nil,
+            location: "My second item location",
+            imageURL: URL(string: "http://my-second-feed-url.com")!)
         
-        let items = [
-            "items": [item1, item2, item3, item4]
-        ]
+        let item3 = makeItem(
+            id: UUID(),
+            description: nil,
+            location: "My second item location",
+            imageURL: URL(string: "http://my-third-feed-url.com")!)
+        
+        let item4 = makeItem(
+            id: UUID(),
+            description: nil,
+            location: nil,
+            imageURL: URL(string: "http://my-second-feed-url.com")!)
+        
+        let allItems = [item1, item2, item3, item4]
         
         // When
-        expect(sut, toGet: .success(feedItems), onAction: {
+        expect(sut, toGet: .success(allItems.map{$0.obj}), onAction: {
             // Then
-            let JSONData = try! JSONSerialization.data(withJSONObject: items)
+            let dictionaryItems = [
+                "items": allItems.map{$0.dictionary}
+            ]
+            let JSONData = try! dictionaryItems.serialize()
             client.complete(withStatusCode: 200, and: JSONData)
         })
     }
@@ -170,6 +147,23 @@ class RemoteFeedLoaderTests: XCTestCase {
         sut.load { capturedResults.append($0) }
         action()
         XCTAssertEqual(capturedResults, [result], file: file, line: line)
+    }
+    
+    private func makeItem(id: UUID, description: String?, location: String?, imageURL: URL) -> (obj: FeedItem, dictionary: [String: Any]) {
+        let obj = FeedItem(
+            id: id,
+            description: description,
+            location: location,
+            imageURL: imageURL
+        )
+        let dictionary = [
+            "id": id.description,
+            "description": description,
+            "location": location,
+            "image": imageURL.description
+        ].compactMapValues {$0}
+        
+        return (obj: obj, dictionary: dictionary)
     }
     
     private class HTTPClientSpy: HTTPClient {
@@ -195,5 +189,11 @@ class RemoteFeedLoaderTests: XCTestCase {
                 headerFields: nil)!
             messages[index].completion(.success(httpResponse, data))
         }
+    }
+}
+
+private extension Dictionary {
+    func serialize() throws -> Data {
+        return try JSONSerialization.data(withJSONObject: self)
     }
 }
