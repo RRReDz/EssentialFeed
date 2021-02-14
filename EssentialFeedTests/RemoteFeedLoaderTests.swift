@@ -104,25 +104,25 @@ class RemoteFeedLoaderTests: XCTestCase {
                 id: UUID(),
                 description: "My first feed item",
                 location: "My first item location",
-                image: URL(string: "http://my-first-feed-url.com")!
+                imageURL: URL(string: "http://my-first-feed-url.com")!
             ),
             FeedItem(
                 id: UUID(),
                 description: nil,
                 location: "My second item location",
-                image: URL(string: "http://my-second-feed-url.com")!
+                imageURL: URL(string: "http://my-second-feed-url.com")!
             ),
             FeedItem(
                 id: UUID(),
                 description: "My third item description",
                 location: nil,
-                image: URL(string: "http://my-third-feed-url.com")!
+                imageURL: URL(string: "http://my-third-feed-url.com")!
             ),
             FeedItem(
                 id: UUID(),
                 description: nil,
                 location: nil,
-                image: URL(string: "http://my-fourth-feed-url.com")!
+                imageURL: URL(string: "http://my-fourth-feed-url.com")!
             )
         ]
         
@@ -130,30 +130,32 @@ class RemoteFeedLoaderTests: XCTestCase {
             "id": feedItems[0].id.description,
             "description": feedItems[0].description!,
             "location": feedItems[0].location!,
-            "imageURL": feedItems[0].image.description
+            "image": feedItems[0].imageURL.description
         ]
         let item2 = [
             "id": feedItems[1].id.description,
             "location": feedItems[1].location!,
-            "imageURL": feedItems[1].image.description
+            "image": feedItems[1].imageURL.description
         ]
         let item3 = [
             "id": feedItems[2].id.description,
             "description": feedItems[2].description!,
-            "imageURL": feedItems[2].image.description
+            "image": feedItems[2].imageURL.description
         ]
         let item4 = [
             "id": feedItems[3].id.description,
-            "imageURL": feedItems[3].image.description
+            "image": feedItems[3].imageURL.description
         ]
-        let validJSONData = try! JSONSerialization.data(withJSONObject: [
+        
+        let itemsArray = [
             "items": [item1, item2, item3, item4]
-        ])
+        ]
         
         // When
         expect(sut, toGet: .success(feedItems), onAction: {
             // Then
-            client.complete(withStatusCode: 200, and: validJSONData)
+            let JSONData = try! JSONSerialization.data(withJSONObject: itemsArray)
+            client.complete(withStatusCode: 200, and: JSONData)
         })
     }
     
