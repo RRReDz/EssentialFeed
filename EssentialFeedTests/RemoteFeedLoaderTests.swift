@@ -155,7 +155,7 @@ class RemoteFeedLoaderTests: XCTestCase {
         client.complete(withStatusCode: 200, and: try! makeItemJSON([]))
         
         // Then
-        XCTAssertEqual(capturedResults, [])
+        XCTAssertTrue(capturedResults.isEmpty)
     }
     
     private func makeSUT(url: URL = URL(string: "http://another-fantastic-awesome-url.com")!, file: StaticString = #file, line: UInt = #line) -> (sut: RemoteFeedLoader, client: HTTPClientSpy) {
