@@ -26,6 +26,26 @@ class URLSessionHTTPClient {
 
 class URLSessionHTTPClientTests: XCTestCase {
     
+        func test_getFromURL_performsGETRequestWithURL() {
+            URLProtocolStub.startInterceptingRequests()
+    
+            let url = URL(string: "http://my-test-url.com")!
+            let exp = XCTestExpectation(description: "Wait for request")
+            
+            URLProtocolStub.observeRequests { request in
+                XCTAssertEqual(request.httpMethod, "GET")
+                XCTAssertEqual(request.url, url)
+                exp.fulfill()
+            }
+            
+            URLSessionHTTPClient().get(from: url, completion: { _ in })
+            
+            wait(for: [exp], timeout: 2.0)
+            
+    
+            URLProtocolStub.stopInterceptingRequests()
+        }
+    
     func test_getFromURL_failsOnRequestError() {
         URLProtocolStub.startInterceptingRequests()
         let url = URL(string: "http://any-url.com")!
@@ -53,6 +73,7 @@ class URLSessionHTTPClientTests: XCTestCase {
     
     private class URLProtocolStub: URLProtocol {
         private static var stub: Stub?
+        private static var requestObserver: ((URLRequest) -> Void)?
         
         private struct Stub {
             let data: Data?
@@ -64,6 +85,10 @@ class URLSessionHTTPClientTests: XCTestCase {
             stub = Stub(data: data, response: response, error: error)
         }
         
+        static func observeRequests(completion: @escaping (URLRequest) -> Void) {
+            URLProtocolStub.requestObserver = completion
+        }
+        
         static func startInterceptingRequests() {
             URLProtocol.registerClass(URLProtocolStub.self)
         }
@@ -71,9 +96,11 @@ class URLSessionHTTPClientTests: XCTestCase {
         static func stopInterceptingRequests() {
             URLProtocol.unregisterClass(URLProtocolStub.self)
             stub = nil
+            requestObserver = nil
         }
         
         override class func canInit(with request: URLRequest) -> Bool {
+            URLProtocolStub.requestObserver?(request)
             return true
         }
         
