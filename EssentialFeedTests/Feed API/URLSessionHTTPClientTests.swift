@@ -43,7 +43,7 @@ class URLSessionHTTPClientTests: XCTestCase {
     }
     
     func test_getFromURL_performsGETRequestWithURL() {
-        let exp = XCTestExpectation(description: "Wait for request")
+        let exp = expectation(description: "Wait for request")
         let url = anyURL()
         
         URLProtocolStub.observeRequests { request in
@@ -81,7 +81,7 @@ class URLSessionHTTPClientTests: XCTestCase {
     func test_getFromURL_succeedOnAnyURLHTTPResponseWithData() {
         let data = anyData()
         let response = anyHTTPURLResponse()
-        let exp = XCTestExpectation(description: "Wait for response")
+        let exp = expectation(description: "Wait for response")
         
         URLProtocolStub.stub(data: data, response: response, error: nil)
 
@@ -102,7 +102,7 @@ class URLSessionHTTPClientTests: XCTestCase {
     
     func test_getFromURL_succeedWithEmptyDataOnAnyURLHTTPResponseWithoutData() {
         let response = anyHTTPURLResponse()
-        let exp = XCTestExpectation(description: "Wait for response")
+        let exp = expectation(description: "Wait for response")
         let emptyData = Data()
         
         URLProtocolStub.stub(data: nil, response: response, error: nil)
@@ -133,7 +133,7 @@ class URLSessionHTTPClientTests: XCTestCase {
     private func resultErrorFor(data: Data?, response: URLResponse?, error: Error?, file: StaticString = #file, line: UInt = #line) -> Error? {
         URLProtocolStub.stub(data: data, response: response, error: error)
         let sut = makeSUT(file: file, line: line)
-        let exp = XCTestExpectation(description: "Expected to get response from get method")
+        let exp = expectation(description: "Expected to get response from get method")
         var capturedError: Error?
         
         sut.get(from: anyURL()) { result in
