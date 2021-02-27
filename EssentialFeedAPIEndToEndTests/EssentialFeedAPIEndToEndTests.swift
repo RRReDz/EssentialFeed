@@ -35,7 +35,7 @@ class EssentialFeedAPIEndToEndTests: XCTestCase {
     
     private func getFeedResult(file: StaticString = #file, line: UInt = #line) -> LoadFeedResult? {
         let url = URL(string: "https://my-json-server.typicode.com/RRReDz/EssentialFeed/response")!
-        let client = URLSessionHTTPClient()
+        let client = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
         let loader = RemoteFeedLoader(client: client, url: url)
         
         trackForMemoryLeaks(client, file: file, line: line)
