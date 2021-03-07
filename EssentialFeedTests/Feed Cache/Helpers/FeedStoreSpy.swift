@@ -19,6 +19,7 @@ internal class FeedStoreSpy: FeedStore {
     
     internal var deletionCompletions: [DeletionCompletion] = []
     internal var insertionCompletions: [InsertionCompletion] = []
+    internal var retrievalCompletions: [RetrievalCompletion] = []
     
     // Called by LocalFeedLoader
     
@@ -32,7 +33,8 @@ internal class FeedStoreSpy: FeedStore {
         receivedMessages.append(.insert(feed, timestamp))
     }
     
-    internal func retrieve() {
+    internal func retrieve(completion: @escaping RetrievalCompletion) {
+        retrievalCompletions.append(completion)
         receivedMessages.append(.retrieve)
     }
     
@@ -52,5 +54,9 @@ internal class FeedStoreSpy: FeedStore {
     
     internal func completeInsertionWithSuccess(at index: Int = 0) {
         insertionCompletions[index](nil)
+    }
+    
+    internal func completeRetrieval(with error: Error, at index: Int = 0) {
+        retrievalCompletions[index](error)
     }
 }
