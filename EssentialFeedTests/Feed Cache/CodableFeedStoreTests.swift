@@ -172,12 +172,8 @@ class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT()
         expect(sut, toRetrieve: .empty)
         
-        let exp = expectation(description: "Wait for delete completion")
-        sut.deleteCachedFeed { error in
-            XCTAssertNil(error, "Expected the deletion to complete without errors")
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
+        let deletionError = deleteCache(from: sut)
+        XCTAssertNil(deletionError, "Expected the deletion to complete without errors")
         
         expect(sut, toRetrieve: .empty)
     }
@@ -186,12 +182,8 @@ class CodableFeedStoreTests: XCTestCase {
         let sut = makeSUT()
         expect(sut, toInsert: (uniqueImageFeed().local, Date()))
         
-        let exp = expectation(description: "Wait for delete completion")
-        sut.deleteCachedFeed { error in
-            XCTAssertNil(error, "Expected the deletion to complete without errors")
-            exp.fulfill()
-        }
-        wait(for: [exp], timeout: 1.0)
+        let deletionError = deleteCache(from: sut)
+        XCTAssertNil(deletionError, "Expected the deletion to complete without errors")
         
         expect(sut, toRetrieve: .empty)
     }
@@ -236,6 +228,18 @@ class CodableFeedStoreTests: XCTestCase {
         var capturedError: Error?
         sut.insert(cache.feed, timestamp: cache.timestamp) { insertionError in
             capturedError = insertionError
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
+        return capturedError
+    }
+    
+    @discardableResult
+    private func deleteCache(from sut: CodableFeedStore, file: StaticString = #file, line: UInt = #line) -> Error? {
+        let exp = expectation(description: "Wait for delete completion")
+        var capturedError: Error?
+        sut.deleteCachedFeed { error in
+            capturedError = error
             exp.fulfill()
         }
         wait(for: [exp], timeout: 1.0)
