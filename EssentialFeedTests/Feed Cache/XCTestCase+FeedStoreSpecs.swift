@@ -108,7 +108,13 @@ extension FeedStoreSpecs where Self: XCTestCase {
             exp3.fulfill()
         }
         
-        waitForExpectations(timeout: 5.0)
+        let result = XCTWaiter().wait(for: [exp1, exp2, exp3], timeout: 5.0)
+        switch result {
+        case .timedOut, .incorrectOrder, .invertedFulfillment, .interrupted:
+            XCTFail("Got the result \"\(result.description)\" while waiting for expectations \"\(exp1)\", \"\(exp2)\", \"\(exp3)\"", file: file, line: line)
+        case .completed: break
+        @unknown default: break
+        }
         
         XCTAssertEqual(completedOperations, [exp1, exp2, exp3], "Expected side-effects to run serially but operations finished in the wrong order", file: file, line: line)
     }
@@ -132,12 +138,18 @@ extension FeedStoreSpecs where Self: XCTestCase {
             exp.fulfill()
         }
         
-        wait(for: [exp], timeout: 1.0)
+        let result = XCTWaiter().wait(for: [exp], timeout: 1.0)
+        switch result {
+        case .timedOut, .incorrectOrder, .invertedFulfillment, .interrupted:
+            XCTFail("Got the result \"\(result.description)\" while waiting for expectation \"\(exp)\"", file: file, line: line)
+        case .completed: break
+        @unknown default: break
+        }
     }
     
     func expect(_ sut: FeedStore, toRetrieveTwice expectedResult: RetrieveCachedFeedResult, file: StaticString = #file, line: UInt = #line) {
-        expect(sut, toRetrieve: expectedResult)
-        expect(sut, toRetrieve: expectedResult)
+        expect(sut, toRetrieve: expectedResult, file: file, line: line)
+        expect(sut, toRetrieve: expectedResult, file: file, line: line)
     }
     
     @discardableResult
@@ -148,7 +160,14 @@ extension FeedStoreSpecs where Self: XCTestCase {
             capturedError = insertionError
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 1.0)
+        
+        let result = XCTWaiter().wait(for: [exp], timeout: 1.0)
+        switch result {
+        case .timedOut, .incorrectOrder, .invertedFulfillment, .interrupted:
+            XCTFail("Got the result \"\(result.description)\" while waiting for expectation \"\(exp)\"", file: file, line: line)
+        case .completed: break
+        @unknown default: break
+        }
         return capturedError
     }
     
@@ -160,7 +179,33 @@ extension FeedStoreSpecs where Self: XCTestCase {
             capturedError = error
             exp.fulfill()
         }
-        wait(for: [exp], timeout: 1.0)
+        
+        let result = XCTWaiter().wait(for: [exp], timeout: 1.0)
+        switch result {
+        case .timedOut, .incorrectOrder, .invertedFulfillment, .interrupted:
+            XCTFail("Got the result \"\(result.description)\" while waiting for expectation \"\(exp)\"", file: file, line: line)
+        case .completed: break
+        @unknown default: break
+        }
         return capturedError
+    }
+}
+
+private extension XCTWaiter.Result {
+    var description: String {
+        switch self {
+        case .completed:
+            return "Completed"
+        case .timedOut:
+            return "Timed Out"
+        case .incorrectOrder:
+            return "Incorrect Order"
+        case .invertedFulfillment:
+            return "Inverted Fulfillment"
+        case .interrupted:
+            return "Interrupted"
+        @unknown default:
+            return "Unknown"
+        }
     }
 }
