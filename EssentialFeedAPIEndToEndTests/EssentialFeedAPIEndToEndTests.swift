@@ -33,7 +33,7 @@ class EssentialFeedAPIEndToEndTests: XCTestCase {
     
     // MARK: - Helpers
     
-    private func getFeedResult(file: StaticString = #file, line: UInt = #line) -> LoadFeedResult? {
+    private func getFeedResult(file: StaticString = #file, line: UInt = #line) -> FeedLoader.Result? {
         let url = URL(string: "https://my-json-server.typicode.com/RRReDz/EssentialFeed/response")!
         let client = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
         let loader = RemoteFeedLoader(client: client, url: url)
@@ -43,7 +43,7 @@ class EssentialFeedAPIEndToEndTests: XCTestCase {
         
         let exp = expectation(description: "Wait for laod completion")
         
-        var receivedResult: LoadFeedResult?
+        var receivedResult: FeedLoader.Result?
         loader.load { result in
             receivedResult = result
             exp.fulfill()
