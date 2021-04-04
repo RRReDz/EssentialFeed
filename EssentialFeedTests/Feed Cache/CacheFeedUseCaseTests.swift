@@ -112,9 +112,9 @@ class CacheFeedUseCaseTests: XCTestCase {
     private func expect(_ sut: LocalFeedLoader, toCompleteWithError error: Error?, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
         let exp = expectation(description: "Wait for save response")
         
-        var capturedResult: LocalFeedLoader.SaveResult = nil
+        var capturedError: Error?
         sut.save(uniqueImageFeed().model) { result in
-            capturedResult = result
+            if case let Result.failure(error) = result { capturedError = error }
             exp.fulfill()
         }
         
@@ -122,7 +122,7 @@ class CacheFeedUseCaseTests: XCTestCase {
         
         wait(for: [exp], timeout: 1.0)
         
-        XCTAssertEqual(capturedResult as NSError?, error as NSError?, file: file, line: line)
+        XCTAssertEqual(capturedError as NSError?, error as NSError?, file: file, line: line)
     }
     
 }
