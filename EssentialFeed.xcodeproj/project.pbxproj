@@ -181,6 +181,13 @@
 /* End PBXFrameworksBuildPhase section */
 
 /* Begin PBXGroup section */
+		734768A9261B793100351C01 /* Frameworks */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = Frameworks;
+			sourceTree = "<group>";
+		};
 		7359F56226069F79007D8BD9 /* FeedStoreSpecs */ = {
 			isa = PBXGroup;
 			children = (
@@ -311,6 +318,7 @@
 				7366AC70261B530B00773EA4 /* EssentialFeediOS */,
 				7366AC7B261B530B00773EA4 /* EssentialFeediOSTests */,
 				9AFDCB7425D48A44007B7D6D /* Products */,
+				734768A9261B793100351C01 /* Frameworks */,
 			);
 			sourceTree = "<group>";
 		};

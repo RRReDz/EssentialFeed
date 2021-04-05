@@ -7,8 +7,22 @@
 
 import XCTest
 
-final class FeedViewController {
-    init(loader: FeedViewControllerTests.LoaderSpy) {}
+final class FeedViewController: UIViewController {
+    private var loader: FeedViewControllerTests.LoaderSpy
+    
+    init(loader: FeedViewControllerTests.LoaderSpy) {
+        self.loader = loader
+        super.init(nibName: nil, bundle: nil)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
+    }
+    
+    override func viewDidLoad() {
+        super.viewDidLoad()
+        loader.load()
+    }
 }
 
 class FeedViewControllerTests: XCTestCase {
@@ -20,7 +34,20 @@ class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(loader.loadCallCount, 0)
     }
     
+    func test_viewDidLoad_loadsFeed() {
+        let loader = LoaderSpy()
+        let sut = FeedViewController(loader: loader)
+        
+        sut.loadViewIfNeeded()
+        
+        XCTAssertEqual(loader.loadCallCount, 1)
+    }
+    
     final class LoaderSpy {
         private(set) var loadCallCount: Int = 0
+        
+        func load() {
+            loadCallCount += 1
+        }
     }
 }
