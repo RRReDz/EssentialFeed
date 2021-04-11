@@ -32,13 +32,13 @@ class FeedViewControllerTests: XCTestCase {
         sut.loadViewIfNeeded()
         XCTAssertTrue(sut.isShowingLoadingIndicator(), "Expected loading indicator once view is loaded")
         
-        loader.completeLoad(at: 0)
+        loader.completeFeedLoading(at: 0)
         XCTAssertFalse(sut.isShowingLoadingIndicator(), "Expected no loading indicator once loading completes successfully")
         
         sut.simulateUserInitiatedFeedReload()
         XCTAssertTrue(sut.isShowingLoadingIndicator(), "Expected loading indicator once user initiates a reload")
         
-        loader.completeLoadWithError(at: 1)
+        loader.completeFeedLoadingWithError(at: 1)
         XCTAssertFalse(sut.isShowingLoadingIndicator(), "Expected no loading indicator once user initiated loading completes with error")
     }
     
@@ -53,11 +53,11 @@ class FeedViewControllerTests: XCTestCase {
         XCTAssertEqual(sut.numberOfRenderedFeedImageViews(), 0)
         assertThat(sut, isRendering: [])
         
-        loader.completeLoad(with: [image0], at: 0)
+        loader.completeFeedLoading(with: [image0], at: 0)
         assertThat(sut, isRendering: [image0])
         
         sut.simulateUserInitiatedFeedReload()
-        loader.completeLoad(with: [image0, image1, image2, image3], at: 1)
+        loader.completeFeedLoading(with: [image0, image1, image2, image3], at: 1)
         assertThat(sut, isRendering: [image0, image1, image2, image3])
     }
     
@@ -66,11 +66,11 @@ class FeedViewControllerTests: XCTestCase {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
-        loader.completeLoad(with: [image0], at: 0)
+        loader.completeFeedLoading(with: [image0], at: 0)
         assertThat(sut, isRendering: [image0])
         
         sut.simulateUserInitiatedFeedReload()
-        loader.completeLoadWithError(at: 1)
+        loader.completeFeedLoadingWithError(at: 1)
         assertThat(sut, isRendering: [image0])
     }
     
@@ -80,7 +80,7 @@ class FeedViewControllerTests: XCTestCase {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
-        loader.completeLoad(with: [image0, image1], at: 0)
+        loader.completeFeedLoading(with: [image0, image1], at: 0)
         
         XCTAssertEqual(loader.loadedImageURLs, [], "Expected no image URL requests until views become visible")
         
@@ -97,7 +97,7 @@ class FeedViewControllerTests: XCTestCase {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
-        loader.completeLoad(with: [image0, image1], at: 0)
+        loader.completeFeedLoading(with: [image0, image1], at: 0)
         
         XCTAssertEqual(loader.canceledImageURLs, [], "Expected no image URL requests until views become visible")
         
@@ -112,7 +112,7 @@ class FeedViewControllerTests: XCTestCase {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
-        loader.completeLoad(with: [makeImage(), makeImage()])
+        loader.completeFeedLoading(with: [makeImage(), makeImage()])
         
         let view0 = sut.simulateFeedImageViewVisible(at: 0)
         let view1 = sut.simulateFeedImageViewVisible(at: 1)
@@ -132,7 +132,7 @@ class FeedViewControllerTests: XCTestCase {
         let (sut, loader) = makeSUT()
         
         sut.loadViewIfNeeded()
-        loader.completeLoad(with: [makeImage(), makeImage()])
+        loader.completeFeedLoading(with: [makeImage(), makeImage()])
         
         let view0 = sut.simulateFeedImageViewVisible(at: 0)
         let view1 = sut.simulateFeedImageViewVisible(at: 1)
@@ -164,11 +164,11 @@ class FeedViewControllerTests: XCTestCase {
             feedRequests.append(completion)
         }
         
-        func completeLoad(with feed: [FeedImage] = [], at index: Int = 0) {
+        func completeFeedLoading(with feed: [FeedImage] = [], at index: Int = 0) {
             feedRequests[index](.success(feed))
         }
         
-        func completeLoadWithError(at index: Int) {
+        func completeFeedLoadingWithError(at index: Int) {
             let error = NSError(domain: "Foo Error", code: 1)
             feedRequests[index](.failure(error))
         }
