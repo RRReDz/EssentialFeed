@@ -11,7 +11,7 @@ import EssentialFeed
 import EssentialFeediOS
 
 class FeedViewControllerTests: XCTestCase {
-
+    
     func test_loadFeedActions_requestFeedFromLoader() {
         let (sut, loader) = makeSUT()
         XCTAssertEqual(loader.loadFeedCallCount, 0, "Expected no loading requests before view is loaded")
@@ -34,7 +34,7 @@ class FeedViewControllerTests: XCTestCase {
         
         loader.completeLoad(at: 0)
         XCTAssertFalse(sut.isShowingLoadingIndicator(), "Expected no loading indicator once loading completes successfully")
-    
+        
         sut.simulateUserInitiatedFeedReload()
         XCTAssertTrue(sut.isShowingLoadingIndicator(), "Expected loading indicator once user initiates a reload")
         
@@ -64,7 +64,7 @@ class FeedViewControllerTests: XCTestCase {
     func test_loadFeedCompletion_doesNotAlterCurrentRenderingStateOnError() {
         let image0 = makeImage(description: "a description", location: "a location")
         let (sut, loader) = makeSUT()
-
+        
         sut.loadViewIfNeeded()
         loader.completeLoad(with: [image0], at: 0)
         assertThat(sut, isRendering: [image0])
@@ -109,24 +109,24 @@ class FeedViewControllerTests: XCTestCase {
     }
     
     func test_feedImageViewLoadingIndicator_isVisibleWhileLoadingImage() {
-             let (sut, loader) = makeSUT()
-
-             sut.loadViewIfNeeded()
-             loader.completeLoad(with: [makeImage(), makeImage()])
-
-             let view0 = sut.simulateFeedImageViewVisible(at: 0)
-             let view1 = sut.simulateFeedImageViewVisible(at: 1)
-             XCTAssertEqual(view0?.isShowingImageLoadingIndicator, true, "Expected loading indicator for first view while loading first image")
-             XCTAssertEqual(view1?.isShowingImageLoadingIndicator, true, "Expected loading indicator for second view while loading second image")
-
-             loader.completeImageLoading(at: 0)
-             XCTAssertEqual(view0?.isShowingImageLoadingIndicator, false, "Expected no loading indicator for first view once first image loading completes successfully")
-             XCTAssertEqual(view1?.isShowingImageLoadingIndicator, true, "Expected no loading indicator state change for second view once first image loading completes successfully")
-
-             loader.completeImageLoadingWithError(at: 1)
-             XCTAssertEqual(view0?.isShowingImageLoadingIndicator, false, "Expected no loading indicator state change for first view once second image loading completes with error")
-             XCTAssertEqual(view1?.isShowingImageLoadingIndicator, false, "Expected no loading indicator for second view once second image loading completes with error")
-         }
+        let (sut, loader) = makeSUT()
+        
+        sut.loadViewIfNeeded()
+        loader.completeLoad(with: [makeImage(), makeImage()])
+        
+        let view0 = sut.simulateFeedImageViewVisible(at: 0)
+        let view1 = sut.simulateFeedImageViewVisible(at: 1)
+        XCTAssertEqual(view0?.isShowingImageLoadingIndicator, true, "Expected loading indicator for first view while loading first image")
+        XCTAssertEqual(view1?.isShowingImageLoadingIndicator, true, "Expected loading indicator for second view while loading second image")
+        
+        loader.completeImageLoading(at: 0)
+        XCTAssertEqual(view0?.isShowingImageLoadingIndicator, false, "Expected no loading indicator for first view once first image loading completes successfully")
+        XCTAssertEqual(view1?.isShowingImageLoadingIndicator, true, "Expected no loading indicator state change for second view once first image loading completes successfully")
+        
+        loader.completeImageLoadingWithError(at: 1)
+        XCTAssertEqual(view0?.isShowingImageLoadingIndicator, false, "Expected no loading indicator state change for first view once second image loading completes with error")
+        XCTAssertEqual(view1?.isShowingImageLoadingIndicator, false, "Expected no loading indicator for second view once second image loading completes with error")
+    }
     
     func test_feedImageView_rendersImageLoadedFromURL() {
         let (sut, loader) = makeSUT()
