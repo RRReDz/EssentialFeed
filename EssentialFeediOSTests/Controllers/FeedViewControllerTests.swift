@@ -260,19 +260,4 @@ class FeedViewControllerTests: XCTestCase {
     private func makeImage(description: String? = nil, location: String? = nil, url: URL = URL(string: "http://any-url.com")!) -> FeedImage {
         return FeedImage(id: UUID(), description: description, location: location, url: url)
     }
-    
-    private func assertThat(_ sut: FeedViewController, hasViewConfiguredFor feedImage: FeedImage, at index: Int, file: StaticString = #file, line: UInt = #line) {
-        let view = sut.feedImageView(at: index) as? FeedImageCell
-        XCTAssertNotNil(view, file: file, line: line)
-        XCTAssertEqual(view?.isShowingLocation, feedImage.location != nil, file: file, line: line)
-        XCTAssertEqual(view?.descriptionText, feedImage.description, file: file, line: line)
-        XCTAssertEqual(view?.locationText, feedImage.location, file: file, line: line)
-    }
-    
-    private func assertThat(_ sut: FeedViewController, isRendering images: [FeedImage], file: StaticString = #file, line: UInt = #line) {
-        XCTAssertEqual(sut.numberOfRenderedFeedImageViews(), images.count, file: file, line: line)
-        images.enumerated().forEach { index, image in
-            assertThat(sut, hasViewConfiguredFor: image, at: index, file: file, line: line)
-        }
-    }
 }
