@@ -6,7 +6,6 @@
 //
 
 import UIKit
-import EssentialFeed
 
 final class FeedImageCellController {
     private var viewModel: FeedImageCellViewModel<UIImage>
