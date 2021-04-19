@@ -12,23 +12,35 @@ public final class FeedUIComposer {
     private init() {}
     
     public static func feedComposedWith(feedLoader: FeedLoader, imageLoader: FeedImageDataLoader) -> FeedViewController {
-        let feedViewModel = FeedViewModel(feedLoader: feedLoader)
-        let refreshController = FeedRefreshController(viewModel: feedViewModel)
+        let presenter = FeedPresenter(feedLoader: feedLoader)
+        
+        let refreshController = FeedRefreshController(presenter: presenter)
+        
         let feedController = FeedViewController(refreshController: refreshController)
-        feedViewModel.onFeedLoad = adaptFeedToCellControllers(forwardingTo: feedController, loader: imageLoader)
+        presenter.loadingView = refreshController
+        presenter.feedView = FeedViewAdapter(feedController: feedController, loader: imageLoader)
+        
         return feedController
     }
+}
+
+private final class FeedViewAdapter: FeedView {
+    private weak var feedController: FeedViewController?
+    private let loader: FeedImageDataLoader
     
-    private static func adaptFeedToCellControllers(forwardingTo controller: FeedViewController, loader: FeedImageDataLoader) -> ([FeedImage]) -> Void {
-        return { [weak controller] feed in
-            controller?.tableModel = feed.map { model in
-                let imageCellViewModel = FeedImageCellViewModel<UIImage>(
-                    model: model,
-                    imageLoader: loader,
-                    imageTransformer: UIImage.init
-                )
-                return FeedImageCellController(viewModel: imageCellViewModel)
-            }
+    init(feedController: FeedViewController, loader: FeedImageDataLoader) {
+        self.feedController = feedController
+        self.loader = loader
+    }
+    
+    func display(feed: [FeedImage]) {
+        feedController?.tableModel = feed.map { model in
+            let imageCellViewModel = FeedImageCellViewModel<UIImage>(
+                model: model,
+                imageLoader: loader,
+                imageTransformer: UIImage.init
+            )
+            return FeedImageCellController(viewModel: imageCellViewModel)
         }
     }
 }
