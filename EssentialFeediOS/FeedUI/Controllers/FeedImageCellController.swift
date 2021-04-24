@@ -59,9 +59,9 @@ extension FeedImageCellController: FeedImageRetryLoadingView {
 
 extension FeedImageCellController: FeedImageStaticDataView {
     func display(_ viewModel: FeedImageStaticDataViewModel) {
-        cell.locationContainer.isHidden = viewModel.isLocationHidden
-        cell.locationLabel.text = viewModel.locationText
-        cell.descriptionLabel.text = viewModel.descriptionText
+        cell.locationContainer.isHidden = viewModel.location == nil
+        cell.locationLabel.text = viewModel.location
+        cell.descriptionLabel.text = viewModel.description
     }
 }
 

@@ -14,9 +14,8 @@ protocol FeedImageView {
 }
 
 struct FeedImageStaticDataViewModel {
-    let isLocationHidden: Bool
-    let locationText: String?
-    let descriptionText: String?
+    let location: String?
+    let description: String?
 }
 
 protocol FeedImageStaticDataView {
@@ -53,9 +52,8 @@ extension FeedImagePresenter: FeedImageCellControllerDelegate {
     func didRequestImage() {
         imageStaticDataView?.display(
             FeedImageStaticDataViewModel(
-                isLocationHidden: model.location == nil,
-                locationText: model.location,
-                descriptionText: model.description))
+                location: model.location,
+                description: model.description))
         
         loadingView?.display(isLoading: true)
         retryLoadingView?.display(retryImageLoading: false)
