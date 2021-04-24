@@ -68,12 +68,41 @@ private final class FeedViewAdapter: FeedView {
     
     func display(_ viewModel: FeedViewModel) {
         feedController?.tableModel = viewModel.feed.map { model in
-            let imageCellViewModel = FeedImageCellViewModel<UIImage>(
+            let imageCellPresenter = FeedImagePresenter<UIImage, WeakRefVirtualProxy<FeedImageCellController>>(
                 model: model,
                 imageLoader: loader,
                 imageTransformer: UIImage.init
             )
-            return FeedImageCellController(viewModel: imageCellViewModel)
+            let feedImageController = FeedImageCellController(delegate: imageCellPresenter)
+            imageCellPresenter.imageView = WeakRefVirtualProxy(feedImageController)
+            imageCellPresenter.loadingView = WeakRefVirtualProxy(feedImageController)
+            imageCellPresenter.retryLoadingView = WeakRefVirtualProxy(feedImageController)
+            imageCellPresenter.imageStaticDataView = WeakRefVirtualProxy(feedImageController)
+            return feedImageController
         }
+    }
+}
+
+extension WeakRefVirtualProxy: FeedImageView where T: FeedImageView, T.Image == UIImage {
+    func display(image: UIImage) {
+        object?.display(image: image)
+    }
+}
+
+extension WeakRefVirtualProxy: FeedImageLoadingView where T: FeedImageLoadingView {
+    func display(isLoading: Bool) {
+        object?.display(isLoading: isLoading)
+    }
+}
+
+extension WeakRefVirtualProxy: FeedImageRetryLoadingView where T: FeedImageRetryLoadingView {
+    func display(retryImageLoading: Bool) {
+        object?.display(retryImageLoading: retryImageLoading)
+    }
+}
+
+extension WeakRefVirtualProxy: FeedImageStaticDataView where T: FeedImageStaticDataView {
+    func display(_ viewModel: FeedImageStaticDataViewModel) {
+        object?.display(viewModel)
     }
 }

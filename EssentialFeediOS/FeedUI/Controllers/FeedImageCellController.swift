@@ -7,49 +7,68 @@
 
 import UIKit
 
+protocol FeedImageCellControllerDelegate {
+    func didRequestImage() -> Void
+    func didCancelImageRequest() -> Void
+}
+
 final class FeedImageCellController {
-    private var viewModel: FeedImageCellViewModel<UIImage>
+    private var delegate: FeedImageCellControllerDelegate
+    private weak var cell: FeedImageCell?
     
-    init(viewModel: FeedImageCellViewModel<UIImage>) {
-        self.viewModel = viewModel
+    init(delegate: FeedImageCellControllerDelegate) {
+        self.delegate = delegate
     }
     
     func view() -> UITableViewCell {
         let cell = binded(FeedImageCell())
-        viewModel.loadImage()
+        delegate.didRequestImage()
         return cell
     }
     
     func preload() {
-        viewModel.preloadImage()
+        delegate.didRequestImage()
     }
     
     func cancelLoad() {
-        viewModel.cancelImageLoading()
+        delegate.didCancelImageRequest()
     }
     
     private func binded(_ cell: FeedImageCell) -> FeedImageCell {
-        cell.locationContainer.isHidden = viewModel.isLocationHidden
-        cell.locationLabel.text = viewModel.locationText
-        cell.descriptionLabel.text = viewModel.descriptionText
-        cell.onRetry = viewModel.loadImage
+        cell.onRetry = delegate.didRequestImage
         
-        viewModel.onImageLoadingStateChange = { [weak cell] isLoading in
-            if isLoading {
-                cell?.feedImageContainer.startShimmering()
-            } else {
-                cell?.feedImageContainer.stopShimmering()
-            }
-        }
-        
-        viewModel.onImageLoad = { [weak cell] image in
-            cell?.feedImageView.image = image
-        }
-        
-        viewModel.onShouldRetryImageLoadStateChange = { [weak cell] isVisible in
-            cell?.feedImageRetryButton.isHidden = !isVisible
-        }
-        
+        self.cell = cell
         return cell
     }
 }
+
+extension FeedImageCellController: FeedImageView {
+    func display(image: UIImage) {
+        cell?.feedImageView.image = image
+    }
+}
+
+extension FeedImageCellController: FeedImageLoadingView {
+    func display(isLoading: Bool) {
+        if isLoading {
+            cell?.feedImageContainer.startShimmering()
+        } else {
+            cell?.feedImageContainer.stopShimmering()
+        }
+    }
+}
+
+extension FeedImageCellController: FeedImageRetryLoadingView {
+    func display(retryImageLoading: Bool) {
+        cell?.feedImageRetryButton.isHidden = !retryImageLoading
+    }
+}
+
+extension FeedImageCellController: FeedImageStaticDataView {
+    func display(_ viewModel: FeedImageStaticDataViewModel) {
+        cell?.locationContainer.isHidden = viewModel.isLocationHidden
+        cell?.locationLabel.text = viewModel.locationText
+        cell?.descriptionLabel.text = viewModel.descriptionText
+    }
+}
+
