@@ -31,47 +31,51 @@ protocol FeedImageRetryLoadingView {
 }
 
 final class FeedImagePresenter<Image, ImageView: FeedImageView> where Image == ImageView.Image {
-    private var task: FeedImageDataLoaderTask?
-    private var model: FeedImage
-    private var imageLoader: FeedImageDataLoader
-    private var imageTransformer: (Data) -> Image?
+    private let imageLoader: FeedImageDataLoader
+    private let imageTransformer: (Data) -> Image?
+    private let imageView: ImageView
+    private let imageStaticDataView: FeedImageStaticDataView
+    private let loadingView: FeedImageLoadingView
+    private let retryLoadingView: FeedImageRetryLoadingView
     
-    var imageView: ImageView?
-    var imageStaticDataView: FeedImageStaticDataView?
-    var loadingView: FeedImageLoadingView?
-    var retryLoadingView: FeedImageRetryLoadingView?
-    
-    init(model: FeedImage, imageLoader: FeedImageDataLoader, imageTransformer: @escaping (Data) -> Image?) {
-        self.model = model
+    init(
+        imageLoader: FeedImageDataLoader,
+        imageTransformer: @escaping (Data) -> Image?,
+        imageView: ImageView,
+        imageStaticDataView: FeedImageStaticDataView,
+        loadingView: FeedImageLoadingView,
+        retryLoadingView: FeedImageRetryLoadingView
+    ) {
         self.imageLoader = imageLoader
         self.imageTransformer = imageTransformer
+        self.imageView = imageView
+        self.imageStaticDataView = imageStaticDataView
+        self.loadingView = loadingView
+        self.retryLoadingView = retryLoadingView
     }
-}
-
-extension FeedImagePresenter: FeedImageCellControllerDelegate {
-    func didRequestImage() {
-        imageStaticDataView?.display(
+    
+    func startLoadingImageData(for model: FeedImage) {
+        imageStaticDataView.display(
             FeedImageStaticDataViewModel(
                 location: model.location,
                 description: model.description))
         
-        loadingView?.display(isLoading: true)
-        retryLoadingView?.display(retryImageLoading: false)
-        task = imageLoader.loadImageData(from: model.url) { [weak self] result in
-            self?.handle(result)
-        }
+        loadingView.display(isLoading: true)
+        retryLoadingView.display(retryImageLoading: false)
     }
     
-    private func handle(_ result: Result<Data, Error>) {
-        if let image = (try? result.get()).flatMap(self.imageTransformer) {
-            imageView?.display(image: image)
-        } else {
-            retryLoadingView?.display(retryImageLoading: true)
+    private struct InvalidImageDataError: Error {}
+    
+    func endLoadingImageData(with imageData: Data) {
+        guard let image = imageTransformer(imageData) else {
+            return endLoadingImageData(with: InvalidImageDataError())
         }
-        loadingView?.display(isLoading: false)
+        imageView.display(image: image)
+        loadingView.display(isLoading: false)
     }
     
-    func didCancelImageRequest() {
-        task?.cancel()
+    func endLoadingImageData(with error: Error) {
+        retryLoadingView.display(retryImageLoading: true)
+        loadingView.display(isLoading: false)
     }
 }

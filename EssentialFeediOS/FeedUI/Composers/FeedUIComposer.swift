@@ -57,6 +57,35 @@ private final class FeedLoaderPresentationAdapter: FeedRefreshControllerDelegate
     }
 }
 
+private final class FeedImagePresentationAdapter<Image, View: FeedImageView>: FeedImageCellControllerDelegate where Image == View.Image {
+    private let model: FeedImage
+    private let loader: FeedImageDataLoader
+    private var task: FeedImageDataLoaderTask?
+    
+    var presenter: FeedImagePresenter<Image, View>?
+    
+    init(model: FeedImage, loader: FeedImageDataLoader) {
+        self.model = model
+        self.loader = loader
+    }
+    
+    func didRequestImage() {
+        presenter?.startLoadingImageData(for: model)
+        task = loader.loadImageData(from: model.url) { [weak presenter] result in
+            switch result {
+            case let .success(imageData):
+                presenter?.endLoadingImageData(with: imageData)
+            case let .failure(error):
+                presenter?.endLoadingImageData(with: error)
+            }
+        }
+    }
+    
+    func didCancelImageRequest() {
+        task?.cancel()
+    }
+}
+
 private final class FeedViewAdapter: FeedView {
     private weak var feedController: FeedViewController?
     private let loader: FeedImageDataLoader
@@ -68,16 +97,19 @@ private final class FeedViewAdapter: FeedView {
     
     func display(_ viewModel: FeedViewModel) {
         feedController?.tableModel = viewModel.feed.map { model in
-            let imageCellPresenter = FeedImagePresenter<UIImage, WeakRefVirtualProxy<FeedImageCellController>>(
-                model: model,
-                imageLoader: loader,
-                imageTransformer: UIImage.init
+            let presentationAdapter = FeedImagePresentationAdapter<UIImage, WeakRefVirtualProxy<FeedImageCellController>> (
+                model: model, loader: loader
             )
-            let feedImageController = FeedImageCellController(delegate: imageCellPresenter)
-            imageCellPresenter.imageView = WeakRefVirtualProxy(feedImageController)
-            imageCellPresenter.loadingView = WeakRefVirtualProxy(feedImageController)
-            imageCellPresenter.retryLoadingView = WeakRefVirtualProxy(feedImageController)
-            imageCellPresenter.imageStaticDataView = WeakRefVirtualProxy(feedImageController)
+            let feedImageController = FeedImageCellController(delegate: presentationAdapter)
+            let imageCellPresenter = FeedImagePresenter<UIImage, WeakRefVirtualProxy<FeedImageCellController>>(
+                imageLoader: loader,
+                imageTransformer: UIImage.init,
+                imageView: WeakRefVirtualProxy(feedImageController),
+                imageStaticDataView: WeakRefVirtualProxy(feedImageController),
+                loadingView: WeakRefVirtualProxy(feedImageController),
+                retryLoadingView: WeakRefVirtualProxy(feedImageController)
+            )
+            presentationAdapter.presenter = imageCellPresenter
             return feedImageController
         }
     }
