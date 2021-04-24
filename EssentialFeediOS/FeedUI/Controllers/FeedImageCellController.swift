@@ -14,14 +14,14 @@ protocol FeedImageCellControllerDelegate {
 
 final class FeedImageCellController {
     private var delegate: FeedImageCellControllerDelegate
-    private weak var cell: FeedImageCell?
+    private lazy var cell = FeedImageCell()
     
     init(delegate: FeedImageCellControllerDelegate) {
         self.delegate = delegate
     }
     
     func view() -> UITableViewCell {
-        let cell = binded(FeedImageCell())
+        cell.onRetry = delegate.didRequestImage
         delegate.didRequestImage()
         return cell
     }
@@ -33,42 +33,35 @@ final class FeedImageCellController {
     func cancelLoad() {
         delegate.didCancelImageRequest()
     }
-    
-    private func binded(_ cell: FeedImageCell) -> FeedImageCell {
-        cell.onRetry = delegate.didRequestImage
-        
-        self.cell = cell
-        return cell
-    }
 }
 
 extension FeedImageCellController: FeedImageView {
     func display(image: UIImage) {
-        cell?.feedImageView.image = image
+        cell.feedImageView.image = image
     }
 }
 
 extension FeedImageCellController: FeedImageLoadingView {
     func display(isLoading: Bool) {
         if isLoading {
-            cell?.feedImageContainer.startShimmering()
+            cell.feedImageContainer.startShimmering()
         } else {
-            cell?.feedImageContainer.stopShimmering()
+            cell.feedImageContainer.stopShimmering()
         }
     }
 }
 
 extension FeedImageCellController: FeedImageRetryLoadingView {
     func display(retryImageLoading: Bool) {
-        cell?.feedImageRetryButton.isHidden = !retryImageLoading
+        cell.feedImageRetryButton.isHidden = !retryImageLoading
     }
 }
 
 extension FeedImageCellController: FeedImageStaticDataView {
     func display(_ viewModel: FeedImageStaticDataViewModel) {
-        cell?.locationContainer.isHidden = viewModel.isLocationHidden
-        cell?.locationLabel.text = viewModel.locationText
-        cell?.descriptionLabel.text = viewModel.descriptionText
+        cell.locationContainer.isHidden = viewModel.isLocationHidden
+        cell.locationLabel.text = viewModel.locationText
+        cell.descriptionLabel.text = viewModel.descriptionText
     }
 }
 
