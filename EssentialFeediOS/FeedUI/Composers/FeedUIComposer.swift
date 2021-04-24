@@ -71,12 +71,13 @@ private final class FeedImagePresentationAdapter<Image, View: FeedImageView>: Fe
     
     func didRequestImage() {
         presenter?.startLoadingImageData(for: model)
-        task = loader.loadImageData(from: model.url) { [weak presenter] result in
+        task = loader.loadImageData(from: model.url) { [weak self] result in
+            guard let self = self else { return }
             switch result {
             case let .success(imageData):
-                presenter?.endLoadingImageData(with: imageData)
+                self.presenter?.endLoadingImageData(with: imageData, for: self.model)
             case let .failure(error):
-                presenter?.endLoadingImageData(with: error)
+                self.presenter?.endLoadingImageData(with: error, for: self.model)
             }
         }
     }
@@ -101,13 +102,10 @@ private final class FeedViewAdapter: FeedView {
                 model: model, loader: loader
             )
             let feedImageController = FeedImageCellController(delegate: presentationAdapter)
-            let imageCellPresenter = FeedImagePresenter<UIImage, WeakRefVirtualProxy<FeedImageCellController>>(
+            let imageCellPresenter = FeedImagePresenter(
                 imageLoader: loader,
-                imageTransformer: UIImage.init,
                 imageView: WeakRefVirtualProxy(feedImageController),
-                imageStaticDataView: WeakRefVirtualProxy(feedImageController),
-                loadingView: WeakRefVirtualProxy(feedImageController),
-                retryLoadingView: WeakRefVirtualProxy(feedImageController)
+                imageTransformer: UIImage.init
             )
             presentationAdapter.presenter = imageCellPresenter
             return feedImageController
@@ -116,25 +114,7 @@ private final class FeedViewAdapter: FeedView {
 }
 
 extension WeakRefVirtualProxy: FeedImageView where T: FeedImageView, T.Image == UIImage {
-    func display(image: UIImage) {
-        object?.display(image: image)
-    }
-}
-
-extension WeakRefVirtualProxy: FeedImageLoadingView where T: FeedImageLoadingView {
-    func display(isLoading: Bool) {
-        object?.display(isLoading: isLoading)
-    }
-}
-
-extension WeakRefVirtualProxy: FeedImageRetryLoadingView where T: FeedImageRetryLoadingView {
-    func display(retryImageLoading: Bool) {
-        object?.display(retryImageLoading: retryImageLoading)
-    }
-}
-
-extension WeakRefVirtualProxy: FeedImageStaticDataView where T: FeedImageStaticDataView {
-    func display(_ viewModel: FeedImageStaticDataViewModel) {
+    func display(_ viewModel: FeedImageViewModel<UIImage>) {
         object?.display(viewModel)
     }
 }

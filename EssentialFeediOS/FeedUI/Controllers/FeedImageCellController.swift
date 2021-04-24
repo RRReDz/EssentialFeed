@@ -36,32 +36,17 @@ final class FeedImageCellController {
 }
 
 extension FeedImageCellController: FeedImageView {
-    func display(image: UIImage) {
-        cell.feedImageView.image = image
-    }
-}
-
-extension FeedImageCellController: FeedImageLoadingView {
-    func display(isLoading: Bool) {
-        if isLoading {
+    func display(_ viewModel: FeedImageViewModel<UIImage>) {
+        cell.locationContainer.isHidden = viewModel.location == nil
+        cell.locationLabel.text = viewModel.location
+        cell.descriptionLabel.text = viewModel.description
+        cell.feedImageView.image = viewModel.image
+        if viewModel.isLoading {
             cell.feedImageContainer.startShimmering()
         } else {
             cell.feedImageContainer.stopShimmering()
         }
-    }
-}
-
-extension FeedImageCellController: FeedImageRetryLoadingView {
-    func display(retryImageLoading: Bool) {
-        cell.feedImageRetryButton.isHidden = !retryImageLoading
-    }
-}
-
-extension FeedImageCellController: FeedImageStaticDataView {
-    func display(_ viewModel: FeedImageStaticDataViewModel) {
-        cell.locationContainer.isHidden = viewModel.location == nil
-        cell.locationLabel.text = viewModel.location
-        cell.descriptionLabel.text = viewModel.description
+        cell.feedImageRetryButton.isHidden = !viewModel.retryLoading
     }
 }
 
