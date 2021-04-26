@@ -10,7 +10,7 @@
         <!--Feed View Controller-->
         <scene sceneID="1e3-zU-5Wn">
             <objects>
-                <tableViewController id="KFz-2g-HPz" customClass="FeedViewController" customModule="Prototype" sceneMemberID="viewController">
+                <tableViewController id="KFz-2g-HPz" customClass="FeedViewController" customModule="EssentialFeediOS" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="eSo-tD-qNT">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -127,10 +127,22 @@ Location</string>
                         </connections>
                     </tableView>
                     <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="3Dh-4p-R37">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
                         <autoresizingMask key="autoresizingMask"/>
+                        <connections>
+                            <action selector="refresh" destination="9us-fv-bJu" eventType="valueChanged" id="3tA-a5-1uE"/>
+                        </connections>
                     </refreshControl>
+                    <connections>
+                        <outlet property="feedRefreshController" destination="9us-fv-bJu" id="klc-wn-KCO"/>
+                    </connections>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="I60-au-1oS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
+                <customObject id="9us-fv-bJu" customClass="FeedRefreshController" customModule="EssentialFeediOS" customModuleProvider="target">
+                    <connections>
+                        <outlet property="view" destination="3Dh-4p-R37" id="pZr-4J-FUp"/>
+                    </connections>
+                </customObject>
             </objects>
             <point key="canvasLocation" x="921.73913043478262" y="69.642857142857139"/>
         </scene>
