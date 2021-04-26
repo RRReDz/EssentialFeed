@@ -18,6 +18,11 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         super.init(nibName: nil, bundle: nil)
     }
     
+    init?(coder: NSCoder, refreshController: FeedRefreshController) {
+        self.feedRefreshController = refreshController
+        super.init(coder: coder)
+    }
+    
     required init?(coder: NSCoder) {
         fatalError("init(coder:) has not been implemented")
     }
