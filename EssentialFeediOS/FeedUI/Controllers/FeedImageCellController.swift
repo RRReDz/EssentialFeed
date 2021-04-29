@@ -22,7 +22,6 @@ final class FeedImageCellController {
     
     func view(in tableView: UITableView) -> UITableViewCell {
         self.cell = tableView.dequeueReusableCell()
-        cell?.onRetry = delegate.didRequestImage
         delegate.didRequestImage()
         return cell!
     }
@@ -49,6 +48,7 @@ extension FeedImageCellController: FeedImageView {
         cell?.feedImageView.image = viewModel.image
         cell?.feedImageContainer.isShimmering = viewModel.isLoading
         cell?.feedImageRetryButton.isHidden = !viewModel.retryLoading
+        cell?.onRetry = delegate.didRequestImage
     }
 }
 
