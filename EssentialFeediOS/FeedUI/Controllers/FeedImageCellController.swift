@@ -21,7 +21,6 @@ final class FeedImageCellController {
     }
     
     func view() -> UITableViewCell {
-        cell.onRetry = delegate.didRequestImage
         delegate.didRequestImage()
         return cell
     }
@@ -47,6 +46,7 @@ extension FeedImageCellController: FeedImageView {
             cell.feedImageContainer.stopShimmering()
         }
         cell.feedImageRetryButton.isHidden = !viewModel.retryLoading
+        cell.onRetry = delegate.didRequestImage
     }
 }
 
