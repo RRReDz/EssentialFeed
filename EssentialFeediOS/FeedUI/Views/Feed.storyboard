@@ -78,6 +78,9 @@ Location</string>
                                                             <state key="normal" title="↻">
                                                                 <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
                                                             </state>
+                                                            <connections>
+                                                                <action selector="feedImageRetryButtonTapped" destination="nnV-K0-RQx" eventType="touchUpInside" id="nZk-w5-WUu"/>
+                                                            </connections>
                                                         </button>
                                                     </subviews>
                                                     <color key="backgroundColor" red="0.8901960784313725" green="0.8901960784313725" blue="0.8901960784313725" alpha="1" colorSpace="calibratedRGB"/>
@@ -119,6 +122,14 @@ Location</string>
                                         <constraint firstAttribute="bottomMargin" secondItem="ZDk-5P-mky" secondAttribute="bottom" priority="999" constant="6" id="qmg-Pn-KZW"/>
                                     </constraints>
                                 </tableViewCellContentView>
+                                <connections>
+                                    <outlet property="descriptionLabel" destination="qdA-9v-5Gy" id="RQQ-WN-nvQ"/>
+                                    <outlet property="feedImageContainer" destination="Ft9-GP-WjA" id="Fs2-av-g7J"/>
+                                    <outlet property="feedImageRetryButton" destination="LCZ-Ho-lR4" id="Qs4-Sj-RVm"/>
+                                    <outlet property="feedImageView" destination="UdN-EG-efK" id="J66-MS-E0q"/>
+                                    <outlet property="locationContainer" destination="Tdt-JJ-XHp" id="HjZ-R1-byz"/>
+                                    <outlet property="locationLabel" destination="jWO-R4-zqD" id="XFS-oV-wHt"/>
+                                </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
