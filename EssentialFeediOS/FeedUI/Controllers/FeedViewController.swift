@@ -12,10 +12,19 @@ protocol FeedControllerDelegate {
 }
 
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching, FeedLoadingView {
-    var delegate: FeedControllerDelegate?
+    private let delegate: FeedControllerDelegate
     
     var tableModel = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
+    }
+    
+    init?(coder: NSCoder, delegate: FeedControllerDelegate) {
+        self.delegate = delegate
+        super.init(coder: coder)
+    }
+    
+    required init?(coder: NSCoder) {
+        fatalError("init(coder:) has not been implemented")
     }
     
     override public func viewDidLoad() {
@@ -24,7 +33,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     @IBAction private func refresh() {
-        delegate?.didRequestFeedRefresh()
+        delegate.didRequestFeedRefresh()
     }
     
     func display(_ viewModel: FeedLoadingViewModel) {
