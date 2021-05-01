@@ -25,7 +25,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     override public func viewDidLoad() {
         super.viewDidLoad()
         
-        title = "My Feed"
+        title = FeedPresenter.title
         tableView.prefetchDataSource = self
         tableView.register(cellType: FeedImageCell.self)
         refreshControl = feedRefreshController.view
