@@ -10,7 +10,15 @@ import UIKit
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
     private let feedRefreshController: FeedRefreshController
     var tableModel = [FeedImageCellController]() {
-        didSet { tableView.reloadData() }
+        didSet {
+            if Thread.isMainThread {
+                tableView.reloadData()
+            } else {
+                DispatchQueue.main.async { [weak self] in
+                    self?.tableView.reloadData()
+                }
+            }
+        }
     }
     
     init(refreshController: FeedRefreshController) {
