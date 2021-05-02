@@ -30,36 +30,6 @@ public final class FeedUIComposer {
     }
 }
 
-private final class FeedImagePresentationAdapter<Image, View: FeedImageView>: FeedImageCellControllerDelegate where Image == View.Image {
-    private let model: FeedImage
-    private let loader: FeedImageDataLoader
-    private var task: FeedImageDataLoaderTask?
-    
-    var presenter: FeedImagePresenter<Image, View>?
-    
-    init(model: FeedImage, loader: FeedImageDataLoader) {
-        self.model = model
-        self.loader = loader
-    }
-    
-    func didRequestImage() {
-        presenter?.startLoadingImageData(for: model)
-        task = loader.loadImageData(from: model.url) { [weak self] result in
-            guard let self = self else { return }
-            switch result {
-            case let .success(imageData):
-                self.presenter?.endLoadingImageData(with: imageData, for: self.model)
-            case let .failure(error):
-                self.presenter?.endLoadingImageData(with: error, for: self.model)
-            }
-        }
-    }
-    
-    func didCancelImageRequest() {
-        task?.cancel()
-    }
-}
-
 private final class FeedViewAdapter: FeedView {
     private weak var feedController: FeedViewController?
     private let loader: FeedImageDataLoader
