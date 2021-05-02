@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7323A77B263E9E7E000692EE /* FeedViewControllerTests+Localizations.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7323A77A263E9E7E000692EE /* FeedViewControllerTests+Localizations.swift */; };
 		733506E225FBED8C00E1CB02 /* FeedCachePolicy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733506E125FBED8C00E1CB02 /* FeedCachePolicy.swift */; };
 		733506E725FE2DE400E1CB02 /* CodableFeedStoreTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 733506E625FE2DE400E1CB02 /* CodableFeedStoreTests.swift */; };
 		734341F4262E1991004EE81A /* FeedPresenter.swift in Sources */ = {isa = PBXBuildFile; fileRef = 734341F3262E1991004EE81A /* FeedPresenter.swift */; };
@@ -131,6 +132,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7323A77A263E9E7E000692EE /* FeedViewControllerTests+Localizations.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "FeedViewControllerTests+Localizations.swift"; sourceTree = "<group>"; };
 		733506E125FBED8C00E1CB02 /* FeedCachePolicy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedCachePolicy.swift; sourceTree = "<group>"; };
 		733506E625FE2DE400E1CB02 /* CodableFeedStoreTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CodableFeedStoreTests.swift; sourceTree = "<group>"; };
 		734341F3262E1991004EE81A /* FeedPresenter.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedPresenter.swift; sourceTree = "<group>"; };
@@ -266,6 +268,7 @@
 				7347691C2624EFC900351C01 /* FeedImageCell+TestHelpers.swift */,
 				734769232624F07400351C01 /* FeedViewControllerTests+LoaderSpy.swift */,
 				7347692A2624F0F600351C01 /* FeedViewControllerTests+Assertions.swift */,
+				7323A77A263E9E7E000692EE /* FeedViewControllerTests+Localizations.swift */,
 			);
 			path = Helpers;
 			sourceTree = "<group>";
@@ -810,6 +813,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				7366ACA1261B64A200773EA4 /* FeedViewControllerTests.swift in Sources */,
+				7323A77B263E9E7E000692EE /* FeedViewControllerTests+Localizations.swift in Sources */,
 				7347692B2624F0F600351C01 /* FeedViewControllerTests+Assertions.swift in Sources */,
 				734769002624ED8A00351C01 /* UIButton+TestHelpers.swift in Sources */,
 				734768F92624ED5000351C01 /* UIRefreshControl+TestHelpers.swift in Sources */,
