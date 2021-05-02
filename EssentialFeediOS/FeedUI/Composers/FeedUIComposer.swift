@@ -20,11 +20,9 @@ public final class FeedUIComposer {
         let feedController = FeedViewController(refreshController: refreshController)
         feedController.title = FeedPresenter.title
         
-        let presenter = FeedPresenter(
+        presentationAdapter.presenter = FeedPresenter(
             feedView: FeedViewAdapter(feedController: feedController, loader: imageLoader),
             loadingView: WeakRefVirtualProxy(refreshController))
-        
-        presentationAdapter.presenter = presenter
         
         return feedController
     }
