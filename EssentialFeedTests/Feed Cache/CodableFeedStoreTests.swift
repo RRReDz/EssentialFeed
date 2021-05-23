@@ -95,7 +95,7 @@ class CodableFeedStoreTests: XCTestCase, FailableFeedStoreSpecs {
     }
     
     func test_delete_doesNotDeliverErrorOnNonEmptyCache() {
-        assertThatDeleteDoesNotDelivererrorOnNonEmptyCache(on: makeSUT())
+        assertThatDeleteDoesNotDeliverErrorOnNonEmptyCache(on: makeSUT())
     }
     
     func test_delete_deliversErrorOnDeletionError() {
