@@ -36,7 +36,8 @@ public final class CoreDataFeedStore: FeedStore {
         let context = self.context
         context.perform {
             do {
-                let managedCache = try ManagedCache.newUniqueInstance(in: context)
+                try ManagedCache.delete(in: context, andSave: false)
+                let managedCache = ManagedCache(context: context)
                 managedCache.timestamp = timestamp
                 managedCache.feed = ManagedFeedImage.images(from: feed, in: context)
                 
@@ -52,7 +53,7 @@ public final class CoreDataFeedStore: FeedStore {
         let context = self.context
         context.perform {
             do {
-                try ManagedCache.find(in: context).map(context.delete).map(context.save)
+                try ManagedCache.delete(in: context, andSave: true)
                 completion(.success(()))
             } catch {
                 completion(.failure(error))
@@ -106,9 +107,9 @@ private class ManagedCache: NSManagedObject {
         return try context.fetch(request).first
     }
     
-    static func newUniqueInstance(in context: NSManagedObjectContext) throws -> ManagedCache {
+    static func delete(in context: NSManagedObjectContext, andSave save: Bool) throws {
         try ManagedCache.find(in: context).map(context.delete)
-        return ManagedCache(context: context)
+        if save { try context.save() }
     }
 }
 
