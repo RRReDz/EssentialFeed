@@ -113,7 +113,7 @@ private class ManagedFeedImage: NSManagedObject {
     @NSManaged var desc: String?
     @NSManaged var location: String?
     @NSManaged var url: URL
-    @NSManaged var cache: ManagedCache
+    @NSManaged var cache: ManagedCache?
     
     static func images(from localFeed: [LocalFeedImage], in context: NSManagedObjectContext) -> NSOrderedSet {
         return NSOrderedSet(array: localFeed.map { local in
