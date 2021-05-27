@@ -30,19 +30,25 @@ final class FeedPresenter {
 class FeedPresenterTests: XCTestCase {
 
     func test_init_doesNotSendMessagesToView() {
-        let view = ViewSpy()
-        _ = FeedPresenter(loadingView: view)
+        let (_, view) = makeSUT()
         
         XCTAssertEqual(view.messages, [])
     }
     
     func test_didStartLoadingFeed_sendLoadingMessageToLoadingView() {
-        let view = ViewSpy()
-        let sut = FeedPresenter(loadingView: view)
+        let (sut, view) = makeSUT()
         
         sut.didStartLoadingFeed()
         
         XCTAssertEqual(view.messages, [.isLoading(true)])
+    }
+    
+    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: FeedPresenter, view: ViewSpy) {
+        let view = ViewSpy()
+        let sut = FeedPresenter(loadingView: view)
+        trackForMemoryLeaks(view, file: file, line: line)
+        trackForMemoryLeaks(sut, file: file, line: line)
+        return (sut, view)
     }
 
     private class ViewSpy: FeedLoadingView {
