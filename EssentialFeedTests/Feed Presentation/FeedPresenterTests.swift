@@ -6,6 +6,7 @@
 //
 
 import XCTest
+import EssentialFeed
 
 protocol FeedLoadingView {
     func display(_ viewModel: FeedLoadingViewModel)
@@ -20,6 +21,10 @@ final class FeedPresenter {
     
     init(loadingView: FeedLoadingView) {
         self.loadingView = loadingView
+    }
+    
+    func didFinishLoadingFeed(with feed: [FeedImage]) {
+        loadingView.display(FeedLoadingViewModel(isLoading: false))
     }
     
     func didStartLoadingFeed() {
@@ -41,6 +46,14 @@ class FeedPresenterTests: XCTestCase {
         sut.didStartLoadingFeed()
         
         XCTAssertEqual(view.messages, [.display(loading: true)])
+    }
+    
+    func test_didFinishLoadingFeed_sendNotLoadingMessageToLoadingView() {
+        let (sut, view) = makeSUT()
+        
+        sut.didFinishLoadingFeed(with: [uniqueImage()])
+        
+        XCTAssertEqual(view.messages, [.display(loading: false)])
     }
     
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: FeedPresenter, view: ViewSpy) {
