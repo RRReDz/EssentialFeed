@@ -40,7 +40,7 @@ class FeedPresenterTests: XCTestCase {
         
         sut.didStartLoadingFeed()
         
-        XCTAssertEqual(view.messages, [.isLoading(true)])
+        XCTAssertEqual(view.messages, [.display(loading: true)])
     }
     
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: FeedPresenter, view: ViewSpy) {
@@ -53,13 +53,13 @@ class FeedPresenterTests: XCTestCase {
 
     private class ViewSpy: FeedLoadingView {
         enum Message: Equatable {
-            case isLoading(Bool)
+            case display(loading: Bool)
         }
         
         var messages = [Message]()
         
         func display(_ viewModel: FeedLoadingViewModel) {
-            messages.append(.isLoading(viewModel.isLoading))
+            messages.append(.display(loading: viewModel.isLoading))
         }
     }
 }
