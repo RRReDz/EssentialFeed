@@ -8,6 +8,14 @@
 import XCTest
 import EssentialFeed
 
+struct FeedViewModel {
+    let feed: [FeedImage]
+}
+
+protocol FeedView {
+    func display(_ viewModel: FeedViewModel)
+}
+
 protocol FeedLoadingView {
     func display(_ viewModel: FeedLoadingViewModel)
 }
@@ -18,12 +26,15 @@ struct FeedLoadingViewModel {
 
 final class FeedPresenter {
     private let loadingView: FeedLoadingView
+    private let feedView: FeedView
     
-    init(loadingView: FeedLoadingView) {
+    init(feedView: FeedView, loadingView: FeedLoadingView) {
+        self.feedView = feedView
         self.loadingView = loadingView
     }
     
     func didFinishLoadingFeed(with feed: [FeedImage]) {
+        feedView.display(FeedViewModel(feed: feed))
         loadingView.display(FeedLoadingViewModel(isLoading: false))
     }
     
@@ -48,31 +59,37 @@ class FeedPresenterTests: XCTestCase {
         XCTAssertEqual(view.messages, [.display(loading: true)])
     }
     
-    func test_didFinishLoadingFeed_sendNotLoadingMessageToLoadingView() {
+    func test_didFinishLoadingFeed_stopsLoadingAndDisplaysFeed() {
         let (sut, view) = makeSUT()
+        let feed = [uniqueImage()]
         
-        sut.didFinishLoadingFeed(with: [uniqueImage()])
+        sut.didFinishLoadingFeed(with: feed)
         
-        XCTAssertEqual(view.messages, [.display(loading: false)])
+        XCTAssertEqual(view.messages, [.display(loading: false), .display(feed: feed)])
     }
     
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: FeedPresenter, view: ViewSpy) {
         let view = ViewSpy()
-        let sut = FeedPresenter(loadingView: view)
+        let sut = FeedPresenter(feedView: view, loadingView: view)
         trackForMemoryLeaks(view, file: file, line: line)
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, view)
     }
 
-    private class ViewSpy: FeedLoadingView {
-        enum Message: Equatable {
+    private class ViewSpy: FeedLoadingView, FeedView {
+        enum Message: Hashable {
             case display(loading: Bool)
+            case display(feed: [FeedImage])
         }
         
-        var messages = [Message]()
+        var messages = Set<Message>()
         
         func display(_ viewModel: FeedLoadingViewModel) {
-            messages.append(.display(loading: viewModel.isLoading))
+            messages.insert(.display(loading: viewModel.isLoading))
+        }
+        
+        func display(_ viewModel: FeedViewModel) {
+            messages.insert(.display(feed: viewModel.feed))
         }
     }
 }
