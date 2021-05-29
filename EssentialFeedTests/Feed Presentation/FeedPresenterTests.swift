@@ -51,7 +51,7 @@ class FeedPresenterTests: XCTestCase {
         XCTAssertEqual(view.messages, [])
     }
     
-    func test_didStartLoadingFeed_sendLoadingMessageToLoadingView() {
+    func test_didStartLoadingFeed_startsLoadingView() {
         let (sut, view) = makeSUT()
         
         sut.didStartLoadingFeed()
