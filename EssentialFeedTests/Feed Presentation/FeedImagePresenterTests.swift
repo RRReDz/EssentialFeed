@@ -7,6 +7,20 @@
 
 import XCTest
 
-class FeedImagePresenterTests: XCTestCase {
+final class FeedImagePresenter {
+    init(view: Any) {}
+}
 
+class FeedImagePresenterTests: XCTestCase {
+    func test_init_doesNotSendMessageToView() {
+        let view = ViewSpy()
+        
+        _ = FeedImagePresenter(view: view)
+        
+        XCTAssert(view.messages.isEmpty)
+    }
+    
+    private final class ViewSpy {
+        var messages = [Any]()
+    }
 }
