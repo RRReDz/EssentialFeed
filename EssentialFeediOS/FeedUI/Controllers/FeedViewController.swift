@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EssentialFeed
 
 public final class ErrorView: UIView {
      public var message: String?
@@ -66,5 +67,11 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
         cellController(forRowAt: indexPath).cancelLoad()
+    }
+}
+
+extension FeedViewController: FeedErrorView {
+    public func display(_ viewModel: FeedErrorViewModel) {
+        errorView.message = viewModel.errorMessage
     }
 }
