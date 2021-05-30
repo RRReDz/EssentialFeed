@@ -74,7 +74,7 @@ class FeedImagePresenterTests: XCTestCase {
         XCTAssert(view.displayRepresentations.isEmpty)
     }
     
-    func test_startLoadingImageData_askViewToDisplayFeedImageRepresentation() {
+    func test_startLoadingImageData_displaysLoadingFeedImageRepresentation() {
         let (sut, view) = makeSUT()
         let imageModel = uniqueImage()
         
@@ -88,7 +88,7 @@ class FeedImagePresenterTests: XCTestCase {
         XCTAssertEqual(view.displayRepresentations, [feedImage])
     }
     
-    func test_endLoadingImageData_askViewToDisplayFeedImageRepresentationOnSuccessfulImageTransformation() {
+    func test_endLoadingImageData_displaysFeedImageRepresentationOnSuccessfulImageTransformation() {
         let image = anyImageString()
         let (sut, view) = makeSUT(imageTransformer: { _ in return image })
         let imageModel = uniqueImage()
@@ -103,12 +103,11 @@ class FeedImagePresenterTests: XCTestCase {
         XCTAssertEqual(view.displayRepresentations, [feedImage])
     }
     
-    func test_endLoadingImageDataWithError_askViewToDisplayFeedImageRetryRepresentation() {
-        let (sut, view) = makeSUT()
+    func test_endLoadingImageData_displaysRetryFeedImageRepresentationOnFailingImageTransformation() {
+        let (sut, view) = makeSUT(imageTransformer: { _ in return nil })
         let imageModel = uniqueImage()
-        let error = anyNSError()
         
-        sut.endLoadingImageData(with: error, for: imageModel)
+        sut.endLoadingImageData(with: anyData(), for: imageModel)
         
         let feedImage = makeFeedImageRepresentation(
             from: imageModel,
@@ -118,11 +117,12 @@ class FeedImagePresenterTests: XCTestCase {
         XCTAssertEqual(view.displayRepresentations, [feedImage])
     }
     
-    func test_endLoadingImageData_askViewToDisplayFeedImageRetryRepresentationOnFailingImageTransformation() {
-        let (sut, view) = makeSUT(imageTransformer: { _ in return nil })
+    func test_endLoadingImageDataWithError_displaysRetryFeedImageRepresentation() {
+        let (sut, view) = makeSUT()
         let imageModel = uniqueImage()
+        let error = anyNSError()
         
-        sut.endLoadingImageData(with: anyData(), for: imageModel)
+        sut.endLoadingImageData(with: error, for: imageModel)
         
         let feedImage = makeFeedImageRepresentation(
             from: imageModel,
