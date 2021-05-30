@@ -8,10 +8,6 @@
 import UIKit
 import EssentialFeed
 
-public final class ErrorView: UIView {
-     public var message: String?
- }
-
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
     private let feedRefreshController: FeedRefreshController
     
