@@ -152,8 +152,8 @@ class FeedImagePresenterTests: XCTestCase {
         image: FakeImage?,
         isLoading: Bool,
         retryLoading: Bool
-    ) -> FeedImageViewModel<FakeImage> {
-        return FeedImageViewModel(
+    ) -> FeedImageRepresentation {
+        return FeedImageRepresentation(
             location: model.location,
             description: model.description,
             image: image,
@@ -166,10 +166,10 @@ class FeedImagePresenterTests: XCTestCase {
     }
     
     private final class ViewSpy: FeedImageView {
-        var displayRepresentations = [FeedImageViewModel<FakeImage>]()
+        var displayRepresentations = [FeedImageRepresentation]()
         
         func display(_ viewModel: FeedImageViewModel<FakeImage>) {
-            displayRepresentations.append(viewModel)
+            displayRepresentations.append(FeedImageRepresentation.make(from: viewModel))
         }
     }
     
@@ -180,6 +180,21 @@ class FeedImagePresenterTests: XCTestCase {
             self.imageName = imageName
         }
     }
+    
+    private struct FeedImageRepresentation: Equatable {
+        let location: String?
+        let description: String?
+        let image: FakeImage?
+        let isLoading: Bool
+        let retryLoading: Bool
+        
+        static func make(from viewModel: FeedImageViewModel<FakeImage>) -> FeedImageRepresentation {
+            return FeedImageRepresentation(
+                location: viewModel.location,
+                description: viewModel.description,
+                image: viewModel.image,
+                isLoading: viewModel.isLoading,
+                retryLoading: viewModel.retryLoading)
+        }
+    }
 }
-
-extension FeedImageViewModel: Equatable where Image: Equatable {}
