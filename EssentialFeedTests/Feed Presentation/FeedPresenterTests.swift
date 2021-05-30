@@ -30,7 +30,7 @@ class FeedPresenterTests: XCTestCase {
         XCTAssertEqual(view.messages, [.display(loading: true)])
     }
     
-    func test_didFinishLoadingFeed_stopsLoadingAndDisplaysFeed() {
+    func test_didFinishLoadingFeedSuccessfully_stopsLoadingAndDisplaysFeed() {
         let (sut, view) = makeSUT()
         let feed = [uniqueImage()]
         
@@ -39,7 +39,7 @@ class FeedPresenterTests: XCTestCase {
         XCTAssertEqual(view.messages, [.display(loading: false), .display(feed: feed)])
     }
     
-    func test_didFinishLoadingFeed_stopsLoadingView() {
+    func test_didFinishLoadingFeedWithError_stopsLoadingView() {
         let (sut, view) = makeSUT()
         let error = anyNSError()
         
