@@ -84,12 +84,11 @@ class FeedImagePresenterTests: XCTestCase {
     }
     
     func test_endLoadingImageData_askViewToDisplayFeedImageRepresentationOnSuccessfulImageTransformation() {
-        let image: String = "successful converted data into image"
+        let image = anyImageString()
         let (sut, view) = makeSUT(imageTransformer: { _ in return image })
         let imageModel = uniqueImage()
-        let anyData = Data()
         
-        sut.endLoadingImageData(with: anyData, for: imageModel)
+        sut.endLoadingImageData(with: anyData(), for: imageModel)
         
         let feedImage = makeFeedImageRepresentation(
             from: imageModel,
@@ -136,6 +135,10 @@ class FeedImagePresenterTests: XCTestCase {
             image: image,
             isLoading: isLoading,
             retryLoading: retryLoading)
+    }
+    
+    private func anyImageString() -> String {
+        return "successful converted data into image"
     }
     
     private final class ViewSpy: FeedImageView {
