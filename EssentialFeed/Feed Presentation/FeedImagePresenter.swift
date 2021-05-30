@@ -1,42 +1,35 @@
 //
 //  FeedImagePresenter.swift
-//  EssentialFeediOS
+//  EssentialFeed
 //
-//  Created by Riccardo Rossi - Home on 20/04/21.
+//  Created by Riccardo Rossi - Home on 30/05/21.
 //
 
 import Foundation
-import EssentialFeed
 
-protocol FeedImageView {
+public struct FeedImageViewModel<Image> {
+    public let location: String?
+    public let description: String?
+    public let image: Image?
+    public let isLoading: Bool
+    public let retryLoading: Bool
+}
+
+public protocol FeedImageView {
     associatedtype Image
     func display(_ viewModel: FeedImageViewModel<Image>)
 }
 
-struct FeedImageViewModel<Image> {
-    let location: String?
-    let description: String?
-    let image: Image?
-    let isLoading: Bool
-    let retryLoading: Bool
-}
-
-final class FeedImagePresenter<Image, ImageView: FeedImageView> where Image == ImageView.Image {
-    private let imageLoader: FeedImageDataLoader
-    private let imageTransformer: (Data) -> Image?
+public final class FeedImagePresenter<Image, ImageView: FeedImageView> where Image == ImageView.Image {
     private let imageView: ImageView
+    private let imageTransformer: (Data) -> Image?
     
-    init(
-        imageLoader: FeedImageDataLoader,
-        imageView: ImageView,
-        imageTransformer: @escaping (Data) -> Image?
-    ) {
-        self.imageLoader = imageLoader
+    public init(imageView: ImageView, imageTransformer: @escaping (Data) -> Image?) {
         self.imageView = imageView
         self.imageTransformer = imageTransformer
     }
     
-    func startLoadingImageData(for model: FeedImage) {
+    public func startLoadingImageData(for model: FeedImage) {
         imageView.display(
             FeedImageViewModel(
                 location: model.location,
@@ -48,7 +41,7 @@ final class FeedImagePresenter<Image, ImageView: FeedImageView> where Image == I
     
     private struct InvalidImageDataError: Error {}
     
-    func endLoadingImageData(with imageData: Data, for model: FeedImage) {
+    public func endLoadingImageData(with imageData: Data, for model: FeedImage) {
         guard let image = imageTransformer(imageData) else {
             return endLoadingImageData(with: InvalidImageDataError(), for: model)
         }
@@ -61,7 +54,7 @@ final class FeedImagePresenter<Image, ImageView: FeedImageView> where Image == I
                 retryLoading: false))
     }
     
-    func endLoadingImageData(with error: Error, for model: FeedImage) {
+    public func endLoadingImageData(with error: Error, for model: FeedImage) {
         imageView.display(
             FeedImageViewModel(
                 location: model.location,
