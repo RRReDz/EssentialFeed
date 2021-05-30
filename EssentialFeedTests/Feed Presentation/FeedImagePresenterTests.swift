@@ -147,8 +147,8 @@ class FeedImagePresenterTests: XCTestCase {
         image: String?,
         isLoading: Bool,
         retryLoading: Bool
-    ) -> FeedImageRepresentation {
-        return FeedImageRepresentation(
+    ) -> FeedImageViewModel<String> {
+        return FeedImageViewModel(
             location: model.location,
             description: model.description,
             image: image,
@@ -161,28 +161,12 @@ class FeedImagePresenterTests: XCTestCase {
     }
     
     private final class ViewSpy: FeedImageView {
-        var displayRepresentations = [FeedImageRepresentation]()
+        var displayRepresentations = [FeedImageViewModel<String>]()
         
         func display(_ viewModel: FeedImageViewModel<String>) {
-            displayRepresentations.append(FeedImageRepresentation(from: viewModel))
+            displayRepresentations.append(viewModel)
         }
     }
 }
 
-private struct FeedImageRepresentation: Equatable {
-    let location: String?
-    let description: String?
-    let image: String?
-    let isLoading: Bool
-    let retryLoading: Bool
-}
-
-extension FeedImageRepresentation {
-    init(from viewModel: FeedImageViewModel<String>) {
-        location = viewModel.location
-        description = viewModel.description
-        image = viewModel.image
-        isLoading = viewModel.isLoading
-        retryLoading = viewModel.retryLoading
-    }
-}
+extension FeedImageViewModel: Equatable where Image: Equatable {}
