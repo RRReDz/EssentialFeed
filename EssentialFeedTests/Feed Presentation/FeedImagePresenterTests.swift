@@ -46,7 +46,7 @@ class FeedImagePresenterTests: XCTestCase {
     }
     
     func test_endLoadingImageData_displaysRetryFeedImageRepresentationOnFailingImageTransformation() {
-        let (sut, view) = makeSUT(imageTransformer: { _ in return nil })
+        let (sut, view) = makeSUT(imageTransformer: fail)
         let imageModel = uniqueImage()
         
         sut.endLoadingImageData(with: anyData(), for: imageModel)
@@ -101,6 +101,10 @@ class FeedImagePresenterTests: XCTestCase {
             image: image,
             isLoading: isLoading,
             retryLoading: retryLoading)
+    }
+    
+    private var fail: (Data) -> FakeImage? {
+        return { _ in nil }
     }
     
     private func anyFakeImage() -> FakeImage {
