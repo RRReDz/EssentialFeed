@@ -132,7 +132,10 @@ class FeedImagePresenterTests: XCTestCase {
         XCTAssertEqual(view.displayRepresentations, [feedImage])
     }
     
-    private func makeSUT(imageTransformer: ((Data) -> String?)? = nil, file: StaticString = #file, line: UInt = #line) -> (FeedImagePresenter<String, ViewSpy>, ViewSpy) {
+    private func makeSUT(
+        imageTransformer: ((Data) -> String?)? = nil,
+        file: StaticString = #file,
+        line: UInt = #line) -> (FeedImagePresenter<String, ViewSpy>, ViewSpy) {
         let view = ViewSpy()
         let sut = FeedImagePresenter(
             imageView: view,
