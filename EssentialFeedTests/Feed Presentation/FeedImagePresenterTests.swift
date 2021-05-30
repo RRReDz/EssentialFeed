@@ -21,11 +21,13 @@ protocol FeedImageView {
     func display(_ viewModel: FeedImageViewModel<Image>)
 }
 
-final class FeedImagePresenter<ImageView: FeedImageView> {
+final class FeedImagePresenter<Image, ImageView: FeedImageView> where Image == ImageView.Image {
     private let imageView: ImageView
+    private let imageTransformer: (Data) -> Image?
     
-    init(imageView: ImageView) {
+    init(imageView: ImageView, imageTransformer: @escaping (Data) -> Image?) {
         self.imageView = imageView
+        self.imageTransformer = imageTransformer
     }
     
     func startLoadingImageData(for model: FeedImage) {
@@ -35,6 +37,16 @@ final class FeedImagePresenter<ImageView: FeedImageView> {
                 description: model.description,
                 image: nil,
                 isLoading: true,
+                retryLoading: false))
+    }
+    
+    func endLoadingImageData(with imageData: Data, for model: FeedImage) {
+        imageView.display(
+            FeedImageViewModel(
+                location: model.location,
+                description: model.description,
+                image: imageTransformer(imageData)!,
+                isLoading: false,
                 retryLoading: false))
     }
 }
@@ -61,9 +73,27 @@ class FeedImagePresenterTests: XCTestCase {
         XCTAssertEqual(view.displayRepresentations, [feedImage])
     }
     
-    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (FeedImagePresenter<ViewSpy>, ViewSpy) {
+    func test_endLoadingImageData_askViewToDisplayFeedImageRepresentationOnSuccessfulImageTransformation() {
+        let image: String = "successful converted data into image"
+        let (sut, view) = makeSUT(imageTransformer: { _ in return image })
+        let imageModel = uniqueImage()
+        let anyData = Data()
+        
+        sut.endLoadingImageData(with: anyData, for: imageModel)
+        
+        let feedImage = makeFeedImageRepresentation(
+            from: imageModel,
+            image: image,
+            isLoading: false,
+            retryLoading: false)
+        XCTAssertEqual(view.displayRepresentations, [feedImage])
+    }
+    
+    private func makeSUT(imageTransformer: ((Data) -> String?)? = nil, file: StaticString = #file, line: UInt = #line) -> (FeedImagePresenter<String, ViewSpy>, ViewSpy) {
         let view = ViewSpy()
-        let sut = FeedImagePresenter(imageView: view)
+        let sut = FeedImagePresenter(
+            imageView: view,
+            imageTransformer: imageTransformer ?? { _ in return nil })
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(view, file: file, line: line)
         return (sut, view)
@@ -78,9 +108,9 @@ class FeedImagePresenterTests: XCTestCase {
         return FeedImageRepresentation(
             location: model.location,
             description: model.description,
-            image: nil,
-            isLoading: true,
-            retryLoading: false)
+            image: image,
+            isLoading: isLoading,
+            retryLoading: retryLoading)
     }
     
     private final class ViewSpy: FeedImageView {
