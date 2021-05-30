@@ -22,12 +22,12 @@ class FeedPresenterTests: XCTestCase {
         XCTAssertEqual(view.messages, [])
     }
     
-    func test_didStartLoadingFeed_startsLoadingView() {
+    func test_didStartLoadingFeed_startsLoadingViewAndHidesError() {
         let (sut, view) = makeSUT()
         
         sut.didStartLoadingFeed()
         
-        XCTAssertEqual(view.messages, [.display(loading: true)])
+        XCTAssertEqual(view.messages, [.display(loading: true), .display(errorMessage: nil)])
     }
     
     func test_didFinishLoadingFeedSuccessfully_stopsLoadingAndDisplaysFeed() {
