@@ -47,6 +47,10 @@ extension FeedViewController {
         return refreshControl!.isRefreshing
     }
     
+    var errorMessage: String? {
+        return errorView.message
+    }
+    
     private var feedImagesSection: Int { return 0 }
     
     func numberOfRenderedFeedImageViews() -> Int {
