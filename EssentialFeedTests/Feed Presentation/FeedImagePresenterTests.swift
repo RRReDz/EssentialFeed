@@ -49,13 +49,12 @@ class FeedImagePresenterTests: XCTestCase {
     
     func test_startLoadingImageData_askViewToDisplayFeedImageRepresentation() {
         let (sut, view) = makeSUT()
-        let image = uniqueImage()
+        let imageModel = uniqueImage()
         
-        sut.startLoadingImageData(for: image)
+        sut.startLoadingImageData(for: imageModel)
         
-        let feedImage = FeedImageRepresentation(
-            location: image.location,
-            description: image.description,
+        let feedImage = makeFeedImageRepresentation(
+            from: imageModel,
             image: nil,
             isLoading: true,
             retryLoading: false)
@@ -68,6 +67,20 @@ class FeedImagePresenterTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(view, file: file, line: line)
         return (sut, view)
+    }
+    
+    private func makeFeedImageRepresentation(
+        from model: FeedImage,
+        image: String?,
+        isLoading: Bool,
+        retryLoading: Bool
+    ) -> FeedImageRepresentation {
+        return FeedImageRepresentation(
+            location: model.location,
+            description: model.description,
+            image: nil,
+            isLoading: true,
+            retryLoading: false)
     }
     
     private final class ViewSpy: FeedImageView {
