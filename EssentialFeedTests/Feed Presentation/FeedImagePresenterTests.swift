@@ -89,7 +89,7 @@ class FeedImagePresenterTests: XCTestCase {
     }
     
     func test_endLoadingImageData_displaysFeedImageRepresentationOnSuccessfulImageTransformation() {
-        let image = anyImageString()
+        let image = anyFakeImage()
         let (sut, view) = makeSUT(imageTransformer: { _ in return image })
         let imageModel = uniqueImage()
         
@@ -132,10 +132,12 @@ class FeedImagePresenterTests: XCTestCase {
         XCTAssertEqual(view.displayRepresentations, [feedImage])
     }
     
+    // MARK: - Helpers
+    
     private func makeSUT(
-        imageTransformer: ((Data) -> String?)? = nil,
+        imageTransformer: ((Data) -> FakeImage?)? = nil,
         file: StaticString = #file,
-        line: UInt = #line) -> (FeedImagePresenter<String, ViewSpy>, ViewSpy) {
+        line: UInt = #line) -> (FeedImagePresenter<FakeImage, ViewSpy>, ViewSpy) {
         let view = ViewSpy()
         let sut = FeedImagePresenter(
             imageView: view,
@@ -147,10 +149,10 @@ class FeedImagePresenterTests: XCTestCase {
     
     private func makeFeedImageRepresentation(
         from model: FeedImage,
-        image: String?,
+        image: FakeImage?,
         isLoading: Bool,
         retryLoading: Bool
-    ) -> FeedImageViewModel<String> {
+    ) -> FeedImageViewModel<FakeImage> {
         return FeedImageViewModel(
             location: model.location,
             description: model.description,
@@ -159,15 +161,23 @@ class FeedImagePresenterTests: XCTestCase {
             retryLoading: retryLoading)
     }
     
-    private func anyImageString() -> String {
-        return "successful converted data into image"
+    private func anyFakeImage() -> FakeImage {
+        return FakeImage(named: "successful converted data into image")
     }
     
     private final class ViewSpy: FeedImageView {
-        var displayRepresentations = [FeedImageViewModel<String>]()
+        var displayRepresentations = [FeedImageViewModel<FakeImage>]()
         
-        func display(_ viewModel: FeedImageViewModel<String>) {
+        func display(_ viewModel: FeedImageViewModel<FakeImage>) {
             displayRepresentations.append(viewModel)
+        }
+    }
+    
+    private struct FakeImage: Equatable {
+        private let imageName: String
+        
+        init(named imageName: String) {
+            self.imageName = imageName
         }
     }
 }
