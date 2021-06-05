@@ -352,13 +352,6 @@
 			path = FeedUI;
 			sourceTree = "<group>";
 		};
-		734769382624F1DD00351C01 /* Feed Image Loader */ = {
-			isa = PBXGroup;
-			children = (
-			);
-			path = "Feed Image Loader";
-			sourceTree = "<group>";
-		};
 		7350722C265B0291004A0D11 /* Infrastructure */ = {
 			isa = PBXGroup;
 			children = (
@@ -412,7 +405,6 @@
 		7366AC70261B530B00773EA4 /* EssentialFeediOS */ = {
 			isa = PBXGroup;
 			children = (
-				734769382624F1DD00351C01 /* Feed Image Loader */,
 				734769312624F18E00351C01 /* FeedUI */,
 				7366AC72261B530B00773EA4 /* Info.plist */,
 			);
