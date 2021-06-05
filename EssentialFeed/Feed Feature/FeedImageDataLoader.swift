@@ -12,7 +12,8 @@ public protocol FeedImageDataLoaderTask {
 }
 
 public protocol FeedImageDataLoader {
-    typealias Result = (Swift.Result<Data, Error>) -> Void
+    typealias Result = Swift.Result<Data, Error>
+    typealias Completion = (Result) -> Void
     
-    func loadImageData(from url: URL, completion: @escaping (Result)) -> FeedImageDataLoaderTask
+    func loadImageData(from url: URL, completion: @escaping (Completion)) -> FeedImageDataLoaderTask
 }

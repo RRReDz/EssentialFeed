@@ -15,7 +15,7 @@ final class RemoteFeedImageDataLoader {
         self.client = client
     }
     
-    func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Result)) {
+    func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Completion)) {
         client.get(from: url) { result in
             switch result {
             case let .failure(error):
@@ -70,7 +70,7 @@ class LoadFeedImageFromRemoteUseCaseTests: XCTestCase {
         return (sut, client)
     }
     
-    private func expect(_ sut: RemoteFeedImageDataLoader, toCompleteWith expectedResult: Result<Data, Error>, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
+    private func expect(_ sut: RemoteFeedImageDataLoader, toCompleteWith expectedResult: FeedImageDataLoader.Result, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
         
         let url = anyURL()
         let exp = expectation(description: "Wait for load image data completion")
