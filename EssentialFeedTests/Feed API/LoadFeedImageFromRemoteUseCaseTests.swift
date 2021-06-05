@@ -21,15 +21,15 @@ class LoadFeedImageFromRemoteUseCaseTests: XCTestCase {
         XCTAssert(client.requestedURLs.isEmpty)
     }
     
-    private func makeSUT(url: URL = anyURL(), file: StaticString = #file, line: UInt = #line) -> (sut: RemoteFeedImageDataLoader, client: ClientSpy) {
-        let client = ClientSpy()
+    private func makeSUT(url: URL = anyURL(), file: StaticString = #file, line: UInt = #line) -> (sut: RemoteFeedImageDataLoader, client: HTTPClientSpy) {
+        let client = HTTPClientSpy()
         let sut = RemoteFeedImageDataLoader(client: client)
         trackForMemoryLeaks(sut, file: file, line: line)
         trackForMemoryLeaks(client, file: file, line: line)
         return (sut, client)
     }
     
-    private class ClientSpy {
+    private class HTTPClientSpy {
         var requestedURLs = [URL]()
     }
 
