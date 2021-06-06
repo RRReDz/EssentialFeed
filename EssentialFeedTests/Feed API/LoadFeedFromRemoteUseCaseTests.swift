@@ -75,7 +75,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
             // Then
             expect(sut, toGet: failure(.invalidData), onAction: {
                 // When
-                client.complete(withStatusCode: statusCode, and: validJSON, at: index)
+                client.complete(withStatusCode: statusCode, data: validJSON, at: index)
             })
         }
     }
@@ -88,7 +88,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         expect(sut, toGet: failure(.invalidData), onAction: {
             // When
             let invalidJsonData: Data = "invalidJson".data(using: .utf8)!
-            client.complete(withStatusCode: 200, and: invalidJsonData)
+            client.complete(withStatusCode: 200, data: invalidJsonData)
         })
     }
     
@@ -100,7 +100,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         expect(sut, toGet: .success([]), onAction: {
             // Then
             let emptyListJSONData: Data = "{\"items\":[]}".data(using: .utf8)!
-            client.complete(withStatusCode: 200, and: emptyListJSONData)
+            client.complete(withStatusCode: 200, data: emptyListJSONData)
         })
     }
     
@@ -138,7 +138,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         expect(sut, toGet: .success(allItems.map{$0.model}), onAction: {
             // Then
             let JSONData = try! makeItemJSON(allItems.map{$0.json})
-            client.complete(withStatusCode: 200, and: JSONData)
+            client.complete(withStatusCode: 200, data: JSONData)
         })
     }
     
@@ -152,7 +152,7 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
         //When
         sut?.load(completion: {capturedResults.append($0)})
         sut = nil
-        client.complete(withStatusCode: 200, and: try! makeItemJSON([]))
+        client.complete(withStatusCode: 200, data: try! makeItemJSON([]))
         
         // Then
         XCTAssertTrue(capturedResults.isEmpty)
@@ -207,35 +207,6 @@ class LoadFeedFromRemoteUseCaseTests: XCTestCase {
     private func makeItemJSON(_ items: [[String: Any]]) throws -> Data {
         let dictionaryItems = ["items": items]
         return try JSONSerialization.data(withJSONObject: dictionaryItems)
-    }
-    
-    private class HTTPClientSpy: HTTPClient {
-        private struct Task: HTTPClientTask {
-            func cancel() {}
-        }
-        
-        var requestedURLs: [URL] { self.messages.map{$0.url} }
-        
-        var messages: [(url: URL, completion: (HTTPClient.Result) -> Void)] = []
-        
-        @discardableResult
-        func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) -> HTTPClientTask {
-            self.messages.append((url: url, completion: completion))
-            return Task()
-        }
-        
-        func complete(with error: Error, at index: Int = 0) {
-            messages[index].completion(.failure(error))
-        }
-        
-        func complete(withStatusCode statusCode: Int, and data: Data, at index: Int = 0) {
-            let httpResponse = HTTPURLResponse(
-                url: requestedURLs[index],
-                statusCode: statusCode,
-                httpVersion: nil,
-                headerFields: nil)!
-            messages[index].completion(.success((httpResponse, data)))
-        }
     }
 }
 
