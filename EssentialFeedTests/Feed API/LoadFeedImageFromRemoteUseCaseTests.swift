@@ -125,7 +125,7 @@ class LoadFeedImageFromRemoteUseCaseTests: XCTestCase {
         XCTAssertNil(capturedResult)
     }
     
-    func test_cancelLoadImageDataFromURL_cancelsClientHTTPRequest() {
+    func test_cancelLoadImageDataFromURL_cancelsClientURLRequest() {
         let (sut, client) = makeSUT()
         let url = anyURL()
         
