@@ -112,7 +112,7 @@ class LoadFeedImageFromRemoteUseCaseTests: XCTestCase {
         XCTAssert(capturedResults.isEmpty, "Expected no received results after cancelling task")
     }
     
-    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: RemoteFeedImageDataLoader, client: HTTPClientSpy) {
+    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: FeedImageDataLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteFeedImageDataLoader(client: client)
         trackForMemoryLeaks(sut, file: file, line: line)
@@ -120,7 +120,7 @@ class LoadFeedImageFromRemoteUseCaseTests: XCTestCase {
         return (sut, client)
     }
     
-    private func expect(_ sut: RemoteFeedImageDataLoader, toCompleteWith expectedResult: FeedImageDataLoader.Result, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
+    private func expect(_ sut: FeedImageDataLoader, toCompleteWith expectedResult: FeedImageDataLoader.Result, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
         
         let url = anyURL()
         let exp = expectation(description: "Wait for load image data completion")
