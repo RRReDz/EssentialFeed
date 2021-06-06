@@ -19,8 +19,17 @@ final class RemoteFeedImageDataLoader {
         case invalidData
     }
     
-    func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Completion)) {
-        client.get(from: url) { [weak self] result in
+    private struct WrappedDataLoaderTask: FeedImageDataLoaderTask {
+        let wrappedTask: HTTPClientTask
+        
+        func cancel() {
+            wrappedTask.cancel()
+        }
+    }
+    
+    @discardableResult
+    func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Completion)) -> FeedImageDataLoaderTask {
+        let task = client.get(from: url) { [weak self] result in
             guard self != nil else { return }
             
             switch result {
@@ -34,6 +43,7 @@ final class RemoteFeedImageDataLoader {
                 completion(.failure(error))
             }
         }
+        return WrappedDataLoaderTask(wrappedTask: task)
     }
 }
 
@@ -115,6 +125,17 @@ class LoadFeedImageFromRemoteUseCaseTests: XCTestCase {
         XCTAssertNil(capturedResult)
     }
     
+    func test_cancelLoadImageDataFromURL_cancelsClientHTTPRequest() {
+        let (sut, client) = makeSUT()
+        let url = anyURL()
+        
+        let task = sut.loadImageData(from: url, completion: { _ in })
+        XCTAssertEqual(client.canceledURLs, [])
+        
+        task.cancel()
+        XCTAssertEqual(client.canceledURLs, [url])
+    }
+    
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: RemoteFeedImageDataLoader, client: HTTPClientSpy) {
         let client = HTTPClientSpy()
         let sut = RemoteFeedImageDataLoader(client: client)
@@ -155,7 +176,15 @@ class LoadFeedImageFromRemoteUseCaseTests: XCTestCase {
     
     private class HTTPClientSpy: HTTPClient {
         private struct Task: HTTPClientTask {
-            func cancel() {}
+            private var onCancel: () -> Void
+            
+            init(onCancel: @escaping () -> Void) {
+                self.onCancel = onCancel
+            }
+            
+            func cancel() {
+                onCancel()
+            }
         }
         
         private var messages = [(url: URL, completion: (HTTPClient.Result) -> Void)]()
@@ -164,9 +193,13 @@ class LoadFeedImageFromRemoteUseCaseTests: XCTestCase {
             messages.map { $0.url }
         }
         
+        var canceledURLs = [URL]()
+        
         func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) -> HTTPClientTask {
             messages.append((url, completion))
-            return Task()
+            return Task(onCancel: { [weak self] in
+                self?.canceledURLs.append(url)
+            })
         }
         
         func complete(with error: Error, at index: Int = 0) {
