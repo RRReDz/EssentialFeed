@@ -9,7 +9,7 @@ import XCTest
 import EssentialFeed
 
 protocol FeedImageDataStore {
-    typealias Result = Swift.Result<Data, Error>
+    typealias Result = Swift.Result<Data?, Error>
     
     func retrieve(dataFrom url: URL, completion: @escaping (FeedImageDataStore.Result) -> Void)
 }
@@ -23,11 +23,14 @@ final class LocalFeedImageDataLoader {
     
     enum Error: Swift.Error {
         case failed
+        case notFound
     }
     
     func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Completion)) {
         store.retrieve(dataFrom: url) { result in
-            completion(.failure(Error.failed))
+            completion(result
+                    .mapError { _ in Error.failed }
+                    .flatMap { _ in .failure(Error.notFound) })
         }
     }
 }
@@ -54,6 +57,14 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         
         expect(sut, toCompleteWith: failed(), when: {
             store.complete(with: anyNSError())
+        })
+    }
+    
+    func test_loadImageData_deliversNotFoundErrorWhenImageDataNotFound() {
+        let (sut, store) = makeSUT()
+        
+        expect(sut, toCompleteWith: notFound(), when: {
+            store.complete(with: .none)
         })
     }
     
@@ -85,6 +96,10 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         return .failure(LocalFeedImageDataLoader.Error.failed)
     }
     
+    private func notFound() -> FeedImageDataLoader.Result {
+        return .failure(LocalFeedImageDataLoader.Error.notFound)
+    }
+    
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: FeedStoreSpy) {
         let store = FeedStoreSpy()
         let sut = LocalFeedImageDataLoader(store: store)
@@ -108,6 +123,10 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         
         func complete(with error: Error, index: Int = 0) {
             completions[index](.failure(error))
+        }
+        
+        func complete(with data: Data?, index: Int = 0) {
+            completions[index](.success(nil))
         }
     }
 }
