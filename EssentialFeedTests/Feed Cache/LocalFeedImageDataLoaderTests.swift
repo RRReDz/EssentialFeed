@@ -40,15 +40,15 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         XCTAssertEqual(store.messages, [.retrieve(dataFor: url)])
     }
     
-    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: StoreSpy) {
-        let store = StoreSpy()
+    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: FeedStoreSpy) {
+        let store = FeedStoreSpy()
         let sut = LocalFeedImageDataLoader(store: store)
         trackForMemoryLeaks(store)
         trackForMemoryLeaks(sut)
         return (sut, store)
     }
     
-    private final class StoreSpy: FeedImageDataStore {
+    private final class FeedStoreSpy: FeedImageDataStore {
         enum Message: Equatable {
             case retrieve(dataFor: URL)
         }
