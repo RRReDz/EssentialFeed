@@ -26,20 +26,26 @@ final class LocalFeedImageDataLoader {
 class LocalFeedImageDataLoaderTests: XCTestCase {
 
     func test_init_doesNotMessageStoreUponCreation() {
-        let store = StoreSpy()
-        _ = LocalFeedImageDataLoader(store: store)
+        let (_, store) = makeSUT()
         
         XCTAssert(store.messages.isEmpty)
     }
     
     func test_loadImageData_requestsStoreDataRetrieval() {
-        let store = StoreSpy()
-        let sut = LocalFeedImageDataLoader(store: store)
+        let (sut, store) = makeSUT()
         let url = anyURL()
         
         sut.loadImageData(from: url)
         
         XCTAssertEqual(store.messages, [.retrieve(dataFor: url)])
+    }
+    
+    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: StoreSpy) {
+        let store = StoreSpy()
+        let sut = LocalFeedImageDataLoader(store: store)
+        trackForMemoryLeaks(store)
+        trackForMemoryLeaks(sut)
+        return (sut, store)
     }
     
     private final class StoreSpy: FeedImageDataStore {
