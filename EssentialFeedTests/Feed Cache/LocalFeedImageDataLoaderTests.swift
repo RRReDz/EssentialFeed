@@ -52,7 +52,7 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
     func test_loadImageData_failsOnStoreError() {
         let (sut, store) = makeSUT()
         
-        expect(sut, toCompleteWith: .failure(LocalFeedImageDataLoader.Error.failed), when: {
+        expect(sut, toCompleteWith: failed(), when: {
             store.complete(with: anyNSError())
         })
     }
@@ -79,6 +79,10 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         
         action()
         wait(for: [exp], timeout: 1.0)
+    }
+    
+    private func failed() -> FeedImageDataLoader.Result {
+        return .failure(LocalFeedImageDataLoader.Error.failed)
     }
     
     private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: LocalFeedImageDataLoader, store: FeedStoreSpy) {
