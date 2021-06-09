@@ -28,7 +28,7 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
     func test_init_doesNotMessageStoreUponCreation() {
         let (_, store) = makeSUT()
         
-        XCTAssert(store.messages.isEmpty)
+        XCTAssertEqual(store.messages, [])
     }
     
     func test_loadImageData_requestsStoreDataRetrieval() {
