@@ -7,8 +7,20 @@
 
 import XCTest
 
+protocol FeedImageDataStore {
+    func retrieve(dataFrom url: URL)
+}
+
 final class LocalFeedImageDataLoader {
-    init(store: Any) {}
+    private let store: FeedImageDataStore
+    
+    init(store: FeedImageDataStore) {
+        self.store = store
+    }
+    
+    func loadImageData(from url: URL) {
+        store.retrieve(dataFrom: url)
+    }
 }
 
 class LocalFeedImageDataLoaderTests: XCTestCase {
@@ -20,7 +32,25 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         XCTAssert(store.messages.isEmpty)
     }
     
-    private final class StoreSpy {
-        var messages = [Any]()
+    func test_loadImageData_requestsStoreDataRetrieval() {
+        let store = StoreSpy()
+        let sut = LocalFeedImageDataLoader(store: store)
+        let url = anyURL()
+        
+        sut.loadImageData(from: url)
+        
+        XCTAssertEqual(store.messages, [.retrieve(dataFor: url)])
+    }
+    
+    private final class StoreSpy: FeedImageDataStore {
+        enum Message: Equatable {
+            case retrieve(dataFor: URL)
+        }
+        
+        var messages = [Message]()
+
+        func retrieve(dataFrom url: URL) {
+            messages.append(.retrieve(dataFor: url))
+        }
     }
 }
