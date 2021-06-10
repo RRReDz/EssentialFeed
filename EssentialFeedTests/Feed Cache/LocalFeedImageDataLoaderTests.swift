@@ -60,7 +60,7 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         })
     }
     
-    func test_loadImageData_deliversNotFoundErrorWhenImageDataNotFound() {
+    func test_loadImageData_deliversNotFoundErrorOnNoneImageData() {
         let (sut, store) = makeSUT()
         
         expect(sut, toCompleteWith: notFound(), when: {
