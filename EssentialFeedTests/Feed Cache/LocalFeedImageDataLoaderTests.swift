@@ -137,7 +137,7 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         var messages = [Message]()
         var completions = [(FeedImageDataStore.Result) -> Void]()
 
-        func retrieve(dataFrom url: URL, completion: @escaping (FeedImageDataStore.Result) -> Void) {
+        func retrieve(dataFor url: URL, completion: @escaping (FeedImageDataStore.Result) -> Void) {
             messages.append(.retrieve(dataFor: url))
             completions.append(completion)
         }

@@ -10,6 +10,6 @@ import Foundation
 public protocol FeedImageDataStore {
     typealias Result = Swift.Result<Data?, Error>
     
-    func retrieve(dataFrom url: URL, completion: @escaping (FeedImageDataStore.Result) -> Void)
+    func retrieve(dataFor url: URL, completion: @escaping (FeedImageDataStore.Result) -> Void)
     func insert(_ data: Data, for url: URL)
 }
