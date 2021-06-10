@@ -83,7 +83,7 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         let url = anyURL()
         let data = anyData()
         
-        sut.saveImageData(data, for: url)
+        sut.save(data: data, for: url)
         
         XCTAssertEqual(store.messages, [.insert(data, for: url)])
     }

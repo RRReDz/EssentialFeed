@@ -52,7 +52,7 @@ extension LocalFeedImageDataLoader {
 }
 
 extension LocalFeedImageDataLoader {
-    public func saveImageData(_ data: Data, for url: URL) {
+    public func save(data: Data, for url: URL) {
         store.insert(data, for: url)
     }
 }
