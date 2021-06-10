@@ -20,11 +20,19 @@ class CacheFeedImageDataUseCaseTests: XCTestCase {
         XCTAssertEqual(store.messages, [.insert(data, for: url)])
     }
     
-    func test_saveImageData_failsOnStoreInsertionError() {
+    func test_save_failsOnStoreInsertionError() {
         let (sut, store) = makeSUT()
         
         expect(sut, toCompleteWith: failed(), when: {
             store.completeInsertion(with: anyNSError())
+        })
+    }
+    
+    func test_save_succeedsOnSuccessfulInsertion() {
+        let (sut, store) = makeSUT()
+        
+        expect(sut, toCompleteWith: .success(()), when: {
+            store.completeInsertionSuccessfully()
         })
     }
     

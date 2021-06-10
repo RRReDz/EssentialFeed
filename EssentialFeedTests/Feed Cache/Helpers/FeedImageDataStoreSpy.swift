@@ -16,14 +16,16 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
     
     private(set) var messages = [Message]()
     private var retrievalCompletions = [(FeedImageDataStore.RetrievalResult) -> Void]()
+    private var insertionCompletions = [(FeedImageDataStore.InsertionResult) -> Void]()
 
     func retrieve(dataFor url: URL, completion: @escaping (FeedImageDataStore.RetrievalResult) -> Void) {
         messages.append(.retrieve(dataFor: url))
         retrievalCompletions.append(completion)
     }
     
-    func insert(_ data: Data, for url: URL) {
+    func insert(_ data: Data, for url: URL, completion: @escaping (InsertionResult) -> Void) {
         messages.append(.insert(data, for: url))
+        insertionCompletions.append(completion)
     }
     
     func completeRetrieval(with error: Error, index: Int = 0) {
@@ -34,7 +36,11 @@ final class FeedImageDataStoreSpy: FeedImageDataStore {
         retrievalCompletions[index](.success(data))
     }
     
-    func completeInsertion(with error: Error) {
-        
+    func completeInsertion(with error: Error, at index: Int = 0) {
+        insertionCompletions[index](.failure(error))
+    }
+    
+    func completeInsertionSuccessfully(at index: Int = 0) {
+        insertionCompletions[index](.success(()))
     }
 }

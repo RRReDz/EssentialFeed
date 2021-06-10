@@ -58,8 +58,9 @@ extension LocalFeedImageDataLoader {
         case failed
     }
     
-    public func save(data: Data, for url: URL, completion: (SaveResult) -> Void) {
-        store.insert(data, for: url)
-        completion(.failure(SaveError.failed))
+    public func save(data: Data, for url: URL, completion: @escaping (SaveResult) -> Void) {
+        store.insert(data, for: url) {
+            completion($0.mapError { _ in SaveError.failed })
+        }
     }
 }
