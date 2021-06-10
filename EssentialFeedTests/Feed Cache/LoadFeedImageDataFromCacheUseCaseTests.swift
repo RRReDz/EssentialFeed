@@ -78,16 +78,6 @@ class LoadFeedImageDataFromCacheUseCaseTests: XCTestCase {
         XCTAssertNil(capturedResult, "Expected no result capture after instance has been deallocated")
     }
     
-    func test_saveImageData_requestsImageDataInsertion() {
-        let (sut, store) = makeSUT()
-        let url = anyURL()
-        let data = anyData()
-        
-        sut.save(data: data, for: url)
-        
-        XCTAssertEqual(store.messages, [.insert(data, for: url)])
-    }
-    
     private func expect(_ sut: LocalFeedImageDataLoader, toCompleteWith expectedResult: FeedImageDataLoader.Result, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
         let exp = expectation(description: "Wait for load image data completion")
         
