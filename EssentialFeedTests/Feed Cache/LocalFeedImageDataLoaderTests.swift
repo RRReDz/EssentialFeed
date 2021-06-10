@@ -26,12 +26,30 @@ final class LocalFeedImageDataLoader {
         case notFound
     }
     
-    func loadImageData(from url: URL, completion: @escaping (FeedImageDataLoader.Completion)) {
+    private class Task: FeedImageDataLoaderTask {
+        private var completion: FeedImageDataLoader.Completion?
+        
+        init(_ completion: @escaping FeedImageDataLoader.Completion) {
+            self.completion = completion
+        }
+        
+        func cancel() {
+            completion = nil
+        }
+        
+        func complete(with result: FeedImageDataLoader.Result) {
+            completion?(result)
+        }
+    }
+    
+    func loadImageData(from url: URL, completion: @escaping FeedImageDataLoader.Completion) -> FeedImageDataLoaderTask {
+        let task = Task(completion)
         store.retrieve(dataFrom: url) { result in
-            completion(result
+            task.complete(with: result
                     .mapError { _ in Error.failed }
                     .flatMap { $0.map { .success($0) } ?? .failure(Error.notFound) })
         }
+        return task
     }
 }
 
@@ -47,7 +65,7 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         let (sut, store) = makeSUT()
         let url = anyURL()
         
-        sut.loadImageData(from: url) { _ in }
+        _ = sut.loadImageData(from: url) { _ in }
         
         XCTAssertEqual(store.messages, [.retrieve(dataFor: url)])
     }
@@ -77,10 +95,25 @@ class LocalFeedImageDataLoaderTests: XCTestCase {
         })
     }
     
+    func test_loadImageData_doesNotDeliverResultOnTaskCancel() {
+        let (sut, store) = makeSUT()
+        
+        var capturedResult: FeedImageDataLoader.Result?
+        let task = sut.loadImageData(from: anyURL()) { capturedResult = $0 }
+        
+        task.cancel()
+        
+        store.complete(with: anyData())
+        store.complete(with: anyNSError())
+        store.complete(with: nil)
+        
+        XCTAssertNil(capturedResult, "Expected no result captured after canceling task")
+    }
+    
     private func expect(_ sut: LocalFeedImageDataLoader, toCompleteWith expectedResult: FeedImageDataLoader.Result, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
         let exp = expectation(description: "Wait for load image data completion")
         
-        sut.loadImageData(from: anyURL()) { receivedResult in
+        _ = sut.loadImageData(from: anyURL()) { receivedResult in
             switch (expectedResult, receivedResult) {
             
             case let (.success(expectedData), .success(retrievedData)):
