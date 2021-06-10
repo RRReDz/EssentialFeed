@@ -36,6 +36,20 @@ class CacheFeedImageDataUseCaseTests: XCTestCase {
         })
     }
     
+    func test_save_doesNotDeliverResultAfterInstanceHasBeenDeallocated() {
+        let store = FeedImageDataStoreSpy()
+        var sut: LocalFeedImageDataLoader? = LocalFeedImageDataLoader(store: store)
+        
+        var capturedResult: LocalFeedImageDataLoader.SaveResult?
+        sut?.save(data: anyData(), for: anyURL()) { capturedResult = $0 }
+        sut = nil
+        
+        store.completeInsertion(with: anyNSError())
+        store.completeInsertionSuccessfully()
+        
+        XCTAssertNil(capturedResult, "Expected no result captured after instance has been deallocated")
+    }
+    
     private func expect(_ sut: LocalFeedImageDataLoader, toCompleteWith expectedResult: LocalFeedImageDataLoader.SaveResult, when action: () -> Void, file: StaticString = #file, line: UInt = #line) {
         
         let exp = expectation(description: "Wait for save completion")
