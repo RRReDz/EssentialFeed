@@ -24,10 +24,20 @@ class CoreDataFeedImageDataStoreTests: XCTestCase {
         expect(sut, toCompleteRetrievalWith: notFound())
     }
     
-    private func expect(_ sut: FeedImageDataStore, toCompleteRetrievalWith expectedResult: FeedImageDataStore.RetrievalResult, file: StaticString = #file, line: UInt = #line) {
+    func test_retrieve_deliversNotFoundWhenNotFoundURLInNonEmptyStore() {
+        let sut = makeSUT()
+        let insertedURL = URL(string: "http://a-url.com")!
+        
+        sut.insert(anyData(), for: insertedURL, completion: { _ in })
+        
+        let toBeRetrievedURL = URL(string: "http://a-different-url.com")!
+        expect(sut, toCompleteRetrievalWith: notFound(), for: toBeRetrievedURL)
+    }
+    
+    private func expect(_ sut: FeedImageDataStore, toCompleteRetrievalWith expectedResult: FeedImageDataStore.RetrievalResult, for url: URL = anyURL(), file: StaticString = #file, line: UInt = #line) {
         let exp = expectation(description: "Wait for retrieve completion")
         
-        sut.retrieve(dataFor: anyURL()) { receivedResult in
+        sut.retrieve(dataFor: url) { receivedResult in
             switch (expectedResult, receivedResult) {
             
             case (.success(let expectedData), .success(let receivedData)):
