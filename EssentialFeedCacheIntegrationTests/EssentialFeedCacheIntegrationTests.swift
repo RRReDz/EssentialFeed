@@ -52,6 +52,19 @@ class EssentialFeedCacheIntegrationTests: XCTestCase {
         expect(feedLoaderToPerformLoad, toLoad: latestFeed)
     }
     
+    func test_validateCache_doesNotDeleteRecentlySavedItems() {
+        let feedLoaderToPerformSave = makeFeedLoader()
+        let feedLoaderToPerformValidation = makeFeedLoader()
+        let feedLoaderToPerformLoad = makeFeedLoader()
+        let feed = uniqueImageFeed().model
+        
+        save(feed, with: feedLoaderToPerformSave)
+        
+        validateCache(with: feedLoaderToPerformValidation)
+        
+        expect(feedLoaderToPerformLoad, toLoad: feed)
+    }
+    
     // MARK: - LocalFeedImageDataLoader Tests
     
     func test_loadImage_deliversSavedDataOnASeparateInstance() {
@@ -111,15 +124,26 @@ class EssentialFeedCacheIntegrationTests: XCTestCase {
         wait(for: [exp], timeout: 1.0)
     }
     
-    private func save(_ feed: [FeedImage], with loader: LocalFeedLoader, file: StaticString = #file, line: UInt = #line) {
+    private func save(_ feed: [FeedImage], with sut: LocalFeedLoader, file: StaticString = #file, line: UInt = #line) {
         let saveExp = expectation(description: "Wait for save completion")
-        loader.save(feed) { error in
+        sut.save(feed) { error in
             if case let .failure(error) = error {
                 XCTFail("Expected to save feed successfully, got error: \(error)", file: file, line: line)
             }
             saveExp.fulfill()
         }
         wait(for: [saveExp], timeout: 1.0)
+    }
+    
+    private func validateCache(with sut: LocalFeedLoader, file: StaticString = #file, line: UInt = #line) {
+        let exp = expectation(description: "Wait for validate cache completion")
+        sut.validateCache { result in
+            if case let .failure(error) = result {
+                XCTFail("Expected to validate cache successfully, got error: \(error)", file: file, line: line)
+            }
+            exp.fulfill()
+        }
+        wait(for: [exp], timeout: 1.0)
     }
     
     // MARK: - LocalFeedImageDataLoader Helpers
