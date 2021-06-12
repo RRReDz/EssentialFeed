@@ -53,8 +53,7 @@ class EssentialFeedCacheIntegrationTests: XCTestCase {
     // MARK: - Helpers
     private func makeSUT() -> LocalFeedLoader {
         let storeURL = specificTestStoreURL()
-        let storeBundle = Bundle(for: CoreDataFeedStore.self)
-        let store = try! CoreDataFeedStore(storeURL: storeURL, bundle: storeBundle)
+        let store = try! CoreDataFeedStore(storeURL: storeURL)
         let loader = LocalFeedLoader(store: store, currentDate: Date.init)
         trackForMemoryLeaks(loader)
         trackForMemoryLeaks(store)
