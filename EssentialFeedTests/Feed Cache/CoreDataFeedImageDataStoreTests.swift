@@ -36,6 +36,18 @@ class CoreDataFeedImageDataStoreTests: XCTestCase {
         expect(sut, toCompleteRetrievalWith: found(data), for: matchingURL)
     }
     
+    func test_retrieve_overridesPreviousInsertedValuesForTheSameURL() {
+        let sut = makeSUT()
+        let url = anyURL()
+        let firstStoredData = Data("first".utf8)
+        let lastStoredData = Data("last".utf8)
+        
+        insert(firstStoredData, for: url, into: sut)
+        insert(lastStoredData, for: url, into: sut)
+        
+        expect(sut, toCompleteRetrievalWith: found(lastStoredData), for: url)
+    }
+    
     private func expect(_ sut: FeedImageDataStore, toCompleteRetrievalWith expectedResult: FeedImageDataStore.RetrievalResult, for url: URL = anyURL(), file: StaticString = #file, line: UInt = #line) {
         let exp = expectation(description: "Wait for retrieve completion")
         
