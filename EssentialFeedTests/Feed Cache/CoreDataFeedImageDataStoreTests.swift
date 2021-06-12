@@ -20,7 +20,7 @@ class CoreDataFeedImageDataStoreTests: XCTestCase {
         let sut = makeSUT()
         let url = URL(string: "http://a-url.com")!
         
-        insert(anyData(), for: url, to: sut)
+        insert(anyData(), for: url, into: sut)
         
         let notFoundURL = URL(string: "http://not-found-url.com")!
         expect(sut, toCompleteRetrievalWith: notFound(), for: notFoundURL)
@@ -31,9 +31,9 @@ class CoreDataFeedImageDataStoreTests: XCTestCase {
         let matchingURL = anyURL()
         let data = anyData()
         
-        insert(data, for: matchingURL, to: sut)
+        insert(data, for: matchingURL, into: sut)
         
-        expect(sut, toCompleteRetrievalWith: .success(data), for: matchingURL)
+        expect(sut, toCompleteRetrievalWith: found(data), for: matchingURL)
     }
     
     private func expect(_ sut: FeedImageDataStore, toCompleteRetrievalWith expectedResult: FeedImageDataStore.RetrievalResult, for url: URL = anyURL(), file: StaticString = #file, line: UInt = #line) {
@@ -60,7 +60,7 @@ class CoreDataFeedImageDataStoreTests: XCTestCase {
         return LocalFeedImage(id: UUID(), description: "any", location: "any", url: url)
     }
     
-    private func insert(_ data: Data, for url: URL, to sut: CoreDataFeedStore, file: StaticString = #file, line: UInt = #line) {
+    private func insert(_ data: Data, for url: URL, into sut: CoreDataFeedStore, file: StaticString = #file, line: UInt = #line) {
         let image = localImage(url: url)
         
         let cacheExp = expectation(description: "Wait for cache insertion")
@@ -91,6 +91,10 @@ class CoreDataFeedImageDataStoreTests: XCTestCase {
     
     private func notFound() -> FeedImageDataStore.RetrievalResult {
         return .success(.none)
+    }
+    
+    private func found(_ data: Data) -> FeedImageDataStore.RetrievalResult {
+        return .success(data)
     }
     
     private func makeSUT() -> CoreDataFeedStore {

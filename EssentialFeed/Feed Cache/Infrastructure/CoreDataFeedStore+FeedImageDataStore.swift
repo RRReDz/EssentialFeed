@@ -10,27 +10,22 @@ import Foundation
 extension CoreDataFeedStore: FeedImageDataStore {
     public func retrieve(dataFor url: URL, completion: @escaping (FeedImageDataStore.RetrievalResult) -> Void) {
         perform { context in
-            do {
-                let managedCache = try ManagedCache.find(in: context)
-                let matchingFeed = managedCache?.feed.compactMap { $0 as? ManagedFeedImage }.first(where: { $0.url == url })
-                completion(.success(matchingFeed?.data))
-            } catch {
-                completion(.failure(error))
-            }
+            completion(Result {
+                let matchingFeed = try ManagedFeedImage.first(with: url, in: context)
+                return matchingFeed?.data
+            })
         }
     }
     
     public func insert(_ data: Data, for url: URL, completion: @escaping (FeedImageDataStore.InsertionResult) -> Void) {
         perform { context in
-            do {
-                let managedCache = try ManagedCache.find(in: context)
-                let matchingFeed = managedCache?.feed.compactMap { $0 as? ManagedFeedImage }.first(where: { $0.url == url })
+            completion(Result {
+                let matchingFeed = try ManagedFeedImage.first(with: url, in: context)
                 matchingFeed?.data = data
+                
                 try context.save()
-                completion(.success(()))
-            } catch {
-                completion(.failure(error))
-            }
+                return Void()
+            })
         }
     }
 }
