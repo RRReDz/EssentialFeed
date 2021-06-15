@@ -6,6 +6,7 @@
 //
 
 import UIKit
+import EssentialFeed
 
 protocol FeedImageCellControllerDelegate {
     func didRequestImage() -> Void
@@ -21,10 +22,9 @@ final class FeedImageCellController {
     }
     
     func view(in tableView: UITableView) -> UITableViewCell {
-        let cell = tableView.dequeueReusableCell(withIdentifier: "FeedImageCell") as! FeedImageCell
-        self.cell = cell
+        self.cell = tableView.dequeueReusableCell()
         delegate.didRequestImage()
-        return cell
+        return cell!
     }
     
     func preload() {
@@ -46,7 +46,7 @@ extension FeedImageCellController: FeedImageView {
         cell?.locationContainer.isHidden = viewModel.location == nil
         cell?.locationLabel.text = viewModel.location
         cell?.descriptionLabel.text = viewModel.description
-        cell?.feedImageView.image = viewModel.image
+        cell?.feedImageView.setImageAnimated(viewModel.image)
         cell?.feedImageContainer.isShimmering = viewModel.isLoading
         cell?.feedImageRetryButton.isHidden = !viewModel.retryLoading
         cell?.onRetry = delegate.didRequestImage

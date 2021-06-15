@@ -143,10 +143,6 @@ class URLSessionHTTPClientTests: XCTestCase {
         )!
     }
     
-    private func anyData() -> Data {
-        return "any data".data(using: .utf8)!
-    }
-    
     private class URLProtocolStub: URLProtocol {
         private static var stub: Stub?
         private static var requestObserver: ((URLRequest) -> Void)?
