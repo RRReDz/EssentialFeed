@@ -8,8 +8,13 @@
 import UIKit
 import EssentialFeed
 
+protocol FeedControllerDelegate {
+    func didRequestFeedRefresh()
+}
+
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
-    private let feedRefreshController: FeedRefreshController
+    
+    private let delegate: FeedControllerDelegate
     
     public let errorView = ErrorView()
     
@@ -17,9 +22,9 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
         didSet { tableView.reloadData() }
     }
     
-    init(refreshController: FeedRefreshController) {
-        self.feedRefreshController = refreshController
-        super.init(nibName: nil, bundle: nil)
+    init?(coder: NSCoder, delegate: FeedControllerDelegate) {
+        self.delegate = delegate
+        super.init(coder: coder)
     }
     
     required init?(coder: NSCoder) {
@@ -28,11 +33,11 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     override public func viewDidLoad() {
         super.viewDidLoad()
-        
-        tableView.prefetchDataSource = self
-        tableView.register(cellType: FeedImageCell.self)
-        refreshControl = feedRefreshController.view
-        feedRefreshController.refresh()
+        refresh()
+    }
+    
+    @IBAction private func refresh() {
+        delegate.didRequestFeedRefresh()
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -63,6 +68,16 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
         cellController(forRowAt: indexPath).cancelLoad()
+    }
+}
+
+extension FeedViewController: FeedLoadingView {
+    public func display(_ viewModel: FeedLoadingViewModel) {
+        if viewModel.isLoading {
+            refreshControl?.beginRefreshing()
+        } else {
+            refreshControl?.endRefreshing()
+        }
     }
 }
 

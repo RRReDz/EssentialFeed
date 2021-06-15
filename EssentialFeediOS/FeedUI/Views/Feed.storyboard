@@ -1,5 +1,5 @@
 <?xml version="1.0" encoding="UTF-8"?>
-<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="1x7-pX-smz">
+<document type="com.apple.InterfaceBuilder3.CocoaTouch.Storyboard.XIB" version="3.0" toolsVersion="17156" targetRuntime="iOS.CocoaTouch" propertyAccessControl="none" useAutolayout="YES" useTraitCollections="YES" useSafeAreas="YES" colorMatched="YES" initialViewController="KFz-2g-HPz">
     <device id="retina6_1" orientation="portrait" appearance="light"/>
     <dependencies>
         <plugIn identifier="com.apple.InterfaceBuilder.IBCocoaTouchPlugin" version="17125"/>
@@ -7,10 +7,10 @@
         <capability name="documents saved in the Xcode 8 format" minToolsVersion="8.0"/>
     </dependencies>
     <scenes>
-        <!--My Feed-->
+        <!--Feed View Controller-->
         <scene sceneID="1e3-zU-5Wn">
             <objects>
-                <tableViewController id="KFz-2g-HPz" customClass="FeedViewController" customModule="Prototype" sceneMemberID="viewController">
+                <tableViewController id="KFz-2g-HPz" customClass="FeedViewController" customModule="EssentialFeediOS" sceneMemberID="viewController">
                     <tableView key="view" clipsSubviews="YES" contentMode="scaleToFill" alwaysBounceVertical="YES" dataMode="prototypes" style="plain" separatorStyle="none" rowHeight="-1" estimatedRowHeight="-1" sectionHeaderHeight="28" sectionFooterHeight="28" id="eSo-tD-qNT">
                         <rect key="frame" x="0.0" y="0.0" width="414" height="896"/>
                         <autoresizingMask key="autoresizingMask" widthSizable="YES" heightSizable="YES"/>
@@ -26,7 +26,7 @@
                             <color key="backgroundColor" systemColor="systemBackgroundColor"/>
                         </view>
                         <prototypes>
-                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="FeedImageCell" id="nnV-K0-RQx" customClass="FeedImageCell" customModule="Prototype" customModuleProvider="target">
+                            <tableViewCell clipsSubviews="YES" contentMode="scaleToFill" preservesSuperviewLayoutMargins="YES" selectionStyle="none" indentationWidth="10" reuseIdentifier="FeedImageCell" id="nnV-K0-RQx" customClass="FeedImageCell" customModule="EssentialFeediOS" customModuleProvider="target">
                                 <rect key="frame" x="0.0" y="44" width="414" height="611"/>
                                 <autoresizingMask key="autoresizingMask"/>
                                 <tableViewCellContentView key="contentView" opaque="NO" clipsSubviews="YES" multipleTouchEnabled="YES" contentMode="center" preservesSuperviewLayoutMargins="YES" insetsLayoutMarginsFromSafeArea="NO" tableViewCell="nnV-K0-RQx" id="8T2-7q-Ac5">
@@ -72,11 +72,25 @@ Location</string>
                                                         <imageView clipsSubviews="YES" userInteractionEnabled="NO" contentMode="scaleAspectFit" horizontalHuggingPriority="251" verticalHuggingPriority="251" translatesAutoresizingMaskIntoConstraints="NO" id="UdN-EG-efK">
                                                             <rect key="frame" x="0.0" y="0.0" width="374" height="374"/>
                                                         </imageView>
+                                                        <button opaque="NO" contentMode="scaleToFill" contentHorizontalAlignment="center" contentVerticalAlignment="center" buttonType="system" lineBreakMode="middleTruncation" translatesAutoresizingMaskIntoConstraints="NO" id="LCZ-Ho-lR4">
+                                                            <rect key="frame" x="0.0" y="0.0" width="374" height="374"/>
+                                                            <fontDescription key="fontDescription" type="system" pointSize="60"/>
+                                                            <state key="normal" title="↻">
+                                                                <color key="titleColor" white="1" alpha="1" colorSpace="custom" customColorSpace="genericGamma22GrayColorSpace"/>
+                                                            </state>
+                                                            <connections>
+                                                                <action selector="feedImageRetryButtonTapped" destination="nnV-K0-RQx" eventType="touchUpInside" id="nZk-w5-WUu"/>
+                                                            </connections>
+                                                        </button>
                                                     </subviews>
                                                     <color key="backgroundColor" red="0.8901960784313725" green="0.8901960784313725" blue="0.8901960784313725" alpha="1" colorSpace="calibratedRGB"/>
                                                     <constraints>
+                                                        <constraint firstAttribute="bottom" secondItem="LCZ-Ho-lR4" secondAttribute="bottom" id="3L8-IK-ckE"/>
+                                                        <constraint firstItem="LCZ-Ho-lR4" firstAttribute="leading" secondItem="Ft9-GP-WjA" secondAttribute="leading" id="BXh-vQ-sDP"/>
                                                         <constraint firstItem="UdN-EG-efK" firstAttribute="leading" secondItem="Ft9-GP-WjA" secondAttribute="leading" id="IGw-hF-UtZ"/>
+                                                        <constraint firstAttribute="trailing" secondItem="LCZ-Ho-lR4" secondAttribute="trailing" id="RfO-jW-Mko"/>
                                                         <constraint firstAttribute="bottom" secondItem="UdN-EG-efK" secondAttribute="bottom" id="U9n-ug-JbE"/>
+                                                        <constraint firstItem="LCZ-Ho-lR4" firstAttribute="top" secondItem="Ft9-GP-WjA" secondAttribute="top" id="erw-ld-34v"/>
                                                         <constraint firstItem="UdN-EG-efK" firstAttribute="top" secondItem="Ft9-GP-WjA" secondAttribute="top" id="f3S-SB-Zu2"/>
                                                         <constraint firstAttribute="width" secondItem="Ft9-GP-WjA" secondAttribute="height" multiplier="1:1" id="fTN-RG-UBZ"/>
                                                         <constraint firstAttribute="trailing" secondItem="UdN-EG-efK" secondAttribute="trailing" id="pbZ-2R-vVQ"/>
@@ -109,41 +123,32 @@ Location</string>
                                     </constraints>
                                 </tableViewCellContentView>
                                 <connections>
-                                    <outlet property="descriptionLabel" destination="qdA-9v-5Gy" id="3LF-da-9rt"/>
-                                    <outlet property="feedImageView" destination="UdN-EG-efK" id="GSz-ae-oPP"/>
-                                    <outlet property="locationContainer" destination="Tdt-JJ-XHp" id="2e3-1w-aoq"/>
-                                    <outlet property="locationLabel" destination="jWO-R4-zqD" id="JiU-Zb-6v0"/>
+                                    <outlet property="descriptionLabel" destination="qdA-9v-5Gy" id="RQQ-WN-nvQ"/>
+                                    <outlet property="feedImageContainer" destination="Ft9-GP-WjA" id="Fs2-av-g7J"/>
+                                    <outlet property="feedImageRetryButton" destination="LCZ-Ho-lR4" id="Qs4-Sj-RVm"/>
+                                    <outlet property="feedImageView" destination="UdN-EG-efK" id="J66-MS-E0q"/>
+                                    <outlet property="locationContainer" destination="Tdt-JJ-XHp" id="HjZ-R1-byz"/>
+                                    <outlet property="locationLabel" destination="jWO-R4-zqD" id="XFS-oV-wHt"/>
                                 </connections>
                             </tableViewCell>
                         </prototypes>
                         <connections>
                             <outlet property="dataSource" destination="KFz-2g-HPz" id="pJO-x9-cIU"/>
                             <outlet property="delegate" destination="KFz-2g-HPz" id="jiZ-Vl-22B"/>
+                            <outlet property="prefetchDataSource" destination="KFz-2g-HPz" id="X9e-nq-QFK"/>
                         </connections>
                     </tableView>
-                    <navigationItem key="navigationItem" title="My Feed" id="7X8-gU-wUI"/>
+                    <refreshControl key="refreshControl" opaque="NO" multipleTouchEnabled="YES" contentMode="center" insetsLayoutMarginsFromSafeArea="NO" enabled="NO" contentHorizontalAlignment="center" contentVerticalAlignment="center" id="3Dh-4p-R37">
+                        <rect key="frame" x="0.0" y="0.0" width="1000" height="1000"/>
+                        <autoresizingMask key="autoresizingMask"/>
+                        <connections>
+                            <action selector="refresh" destination="KFz-2g-HPz" eventType="valueChanged" id="dPm-Wl-YU7"/>
+                        </connections>
+                    </refreshControl>
                 </tableViewController>
                 <placeholder placeholderIdentifier="IBFirstResponder" id="I60-au-1oS" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
             </objects>
             <point key="canvasLocation" x="921.73913043478262" y="69.642857142857139"/>
-        </scene>
-        <!--Navigation Controller-->
-        <scene sceneID="yKa-vk-gvo">
-            <objects>
-                <placeholder placeholderIdentifier="IBFirstResponder" id="psQ-R3-VD2" userLabel="First Responder" customClass="UIResponder" sceneMemberID="firstResponder"/>
-                <navigationController automaticallyAdjustsScrollViewInsets="NO" id="1x7-pX-smz" sceneMemberID="viewController">
-                    <toolbarItems/>
-                    <navigationBar key="navigationBar" contentMode="scaleToFill" insetsLayoutMarginsFromSafeArea="NO" id="Qxw-gu-OGM">
-                        <rect key="frame" x="0.0" y="44" width="414" height="44"/>
-                        <autoresizingMask key="autoresizingMask"/>
-                    </navigationBar>
-                    <nil name="viewControllers"/>
-                    <connections>
-                        <segue destination="KFz-2g-HPz" kind="relationship" relationship="rootViewController" id="O1o-vo-orf"/>
-                    </connections>
-                </navigationController>
-            </objects>
-            <point key="canvasLocation" x="11.594202898550726" y="69.642857142857139"/>
         </scene>
     </scenes>
     <resources>
