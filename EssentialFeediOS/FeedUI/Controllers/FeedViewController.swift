@@ -12,8 +12,10 @@ protocol FeedControllerDelegate {
     func didRequestFeedRefresh()
 }
 
-public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching, FeedLoadingView {
+public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
+    
     private let delegate: FeedControllerDelegate
+    
     public let errorView = ErrorView()
     
     var tableModel = [FeedImageCellController]() {
@@ -36,14 +38,6 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     @IBAction private func refresh() {
         delegate.didRequestFeedRefresh()
-    }
-    
-    public func display(_ viewModel: FeedLoadingViewModel) {
-        if viewModel.isLoading {
-            refreshControl?.beginRefreshing()
-        } else {
-            refreshControl?.endRefreshing()
-        }
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
@@ -74,6 +68,16 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private func cancelCellControllerLoad(forRowAt indexPath: IndexPath) {
         cellController(forRowAt: indexPath).cancelLoad()
+    }
+}
+
+extension FeedViewController: FeedLoadingView {
+    public func display(_ viewModel: FeedLoadingViewModel) {
+        if viewModel.isLoading {
+            refreshControl?.beginRefreshing()
+        } else {
+            refreshControl?.endRefreshing()
+        }
     }
 }
 
