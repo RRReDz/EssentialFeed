@@ -9,14 +9,18 @@ import XCTest
 import EssentialFeed
 
 final class FeedImageLoaderWithFallbackComposite: FeedImageDataLoader {
+    private let primary: FeedImageDataLoader
     
-    init(primary: FeedImageDataLoader, fallback: FeedImageDataLoader) {}
+    init(primary: FeedImageDataLoader, fallback: FeedImageDataLoader) {
+        self.primary = primary
+    }
     
     private class Task: FeedImageDataLoaderTask {
         func cancel() {}
     }
     
     func loadImageData(from url: URL, completion: @escaping (Completion)) -> FeedImageDataLoaderTask {
+        _ = primary.loadImageData(from: url, completion: completion)
         return Task()
     }
 }
@@ -27,6 +31,15 @@ class FeedImageLoaderWithFallbackCompositeTests: XCTestCase {
         let (_, primaryLoader, fallbackLoader) = makeSUT()
         
         XCTAssert(primaryLoader.loadedURL.isEmpty, "Expected no loaded URLs in the primary loader")
+        XCTAssert(fallbackLoader.loadedURL.isEmpty, "Expected no loaded URLs in the fallback loader")
+    }
+    
+    func test_init_loadsFromPrimaryLoaderFirst() {
+        let (sut, primaryLoader, fallbackLoader) = makeSUT()
+        let url = anyURL()
+        _ = sut.loadImageData(from: url) { _ in }
+        
+        XCTAssertEqual(primaryLoader.loadedURL, [url])
         XCTAssert(fallbackLoader.loadedURL.isEmpty, "Expected no loaded URLs in the fallback loader")
     }
     
@@ -56,5 +69,8 @@ class FeedImageLoaderWithFallbackCompositeTests: XCTestCase {
         trackForMemoryLeaks(sut, file: file, line: line)
         return (sut, primaryLoader, fallbackLoader)
     }
-
+    
+    private func anyURL() -> URL {
+        return URL(string: "http://any-url.com")!
+    }
 }
