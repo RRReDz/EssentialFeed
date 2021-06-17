@@ -34,9 +34,10 @@ class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
         XCTAssert(fallbackLoader.loadedURL.isEmpty, "Expected no loaded URLs in the fallback loader")
     }
     
-    func test_init_loadsFromPrimaryLoaderFirst() {
+    func test_load_loadsFromPrimaryLoaderFirst() {
         let (sut, primaryLoader, fallbackLoader) = makeSUT()
         let url = anyURL()
+        
         _ = sut.loadImageData(from: url) { _ in }
         
         XCTAssertEqual(primaryLoader.loadedURL, [url])
