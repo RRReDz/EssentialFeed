@@ -1,5 +1,5 @@
 //
-//  FeedImageLoaderWithFallbackCompositeTests.swift
+//  FeedImageDataLoaderWithFallbackCompositeTests.swift
 //  EssentialAppTests
 //
 //  Created by Riccardo Rossi - Home on 17/06/21.
@@ -8,7 +8,7 @@
 import XCTest
 import EssentialFeed
 
-final class FeedImageLoaderWithFallbackComposite: FeedImageDataLoader {
+final class FeedImageDataLoaderWithFallbackComposite: FeedImageDataLoader {
     private let primary: FeedImageDataLoader
     
     init(primary: FeedImageDataLoader, fallback: FeedImageDataLoader) {
@@ -25,7 +25,7 @@ final class FeedImageLoaderWithFallbackComposite: FeedImageDataLoader {
     }
 }
 
-class FeedImageLoaderWithFallbackCompositeTests: XCTestCase {
+class FeedImageDataLoaderWithFallbackCompositeTests: XCTestCase {
     
     func test_init_doesNotLoadImageData() {
         let (_, primaryLoader, fallbackLoader) = makeSUT()
@@ -59,10 +59,10 @@ class FeedImageLoaderWithFallbackCompositeTests: XCTestCase {
         }
     }
     
-    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: FeedImageLoaderWithFallbackComposite, primaryLoader: ImageLoaderSpy, fallbackLoader: ImageLoaderSpy) {
+    private func makeSUT(file: StaticString = #file, line: UInt = #line) -> (sut: FeedImageDataLoaderWithFallbackComposite, primaryLoader: ImageLoaderSpy, fallbackLoader: ImageLoaderSpy) {
         let primaryLoader = ImageLoaderSpy()
         let fallbackLoader = ImageLoaderSpy()
-        let sut = FeedImageLoaderWithFallbackComposite(
+        let sut = FeedImageDataLoaderWithFallbackComposite(
             primary: primaryLoader, fallback: fallbackLoader)
         trackForMemoryLeaks(primaryLoader, file: file, line: line)
         trackForMemoryLeaks(fallbackLoader, file: file, line: line)
