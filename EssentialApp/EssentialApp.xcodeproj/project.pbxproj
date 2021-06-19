@@ -27,6 +27,7 @@
 		73FCD7E3267E3D0E001B67E1 /* FeedLoaderStub.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FCD7E2267E3D0E001B67E1 /* FeedLoaderStub.swift */; };
 		73FCD7E6267E3E99001B67E1 /* XCTestCase+FeedLoader.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FCD7E5267E3E98001B67E1 /* XCTestCase+FeedLoader.swift */; };
 		73FCD7F0267E4B92001B67E1 /* FeedLoaderCacheDecorator.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FCD7EF267E4B92001B67E1 /* FeedLoaderCacheDecorator.swift */; };
+		73FCD7F3267E4DDA001B67E1 /* FeedImageDataLoaderCacheDecoratorTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 73FCD7F2267E4DDA001B67E1 /* FeedImageDataLoaderCacheDecoratorTests.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXContainerItemProxy section */
@@ -77,6 +78,7 @@
 		73FCD7E2267E3D0E001B67E1 /* FeedLoaderStub.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderStub.swift; sourceTree = "<group>"; };
 		73FCD7E5267E3E98001B67E1 /* XCTestCase+FeedLoader.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+FeedLoader.swift"; sourceTree = "<group>"; };
 		73FCD7EF267E4B92001B67E1 /* FeedLoaderCacheDecorator.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedLoaderCacheDecorator.swift; sourceTree = "<group>"; };
+		73FCD7F2267E4DDA001B67E1 /* FeedImageDataLoaderCacheDecoratorTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = FeedImageDataLoaderCacheDecoratorTests.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -118,6 +120,7 @@
 				737C582526794FB1002AF06F /* FeedLoaderWithFallbackCompositeTests.swift */,
 				731BAF77267AAD63009FE97A /* FeedImageDataLoaderWithFallbackCompositeTests.swift */,
 				73FCD7DF267E391D001B67E1 /* FeedLoaderCacheDecoratorTests.swift */,
+				73FCD7F2267E4DDA001B67E1 /* FeedImageDataLoaderCacheDecoratorTests.swift */,
 			);
 			path = EssentialAppTests;
 			sourceTree = "<group>";
@@ -270,6 +273,7 @@
 			buildActionMask = 2147483647;
 			files = (
 				739FBCAD267E00460030DA9A /* SharedTestHelpers.swift in Sources */,
+				73FCD7F3267E4DDA001B67E1 /* FeedImageDataLoaderCacheDecoratorTests.swift in Sources */,
 				73FCD7E6267E3E99001B67E1 /* XCTestCase+FeedLoader.swift in Sources */,
 				73FCD7E0267E391D001B67E1 /* FeedLoaderCacheDecoratorTests.swift in Sources */,
 				731BAF78267AAD63009FE97A /* FeedImageDataLoaderWithFallbackCompositeTests.swift in Sources */,
