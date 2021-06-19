@@ -21,10 +21,16 @@ public final class FeedLoaderCacheDecorator: FeedLoader {
         decoratee.load { [weak self] result in
             completion(
                 result.map { feed in
-                    self?.cache.save(feed) { _ in }
+                    self?.cache.saveIgnoringResult(feed)
                     return feed
                 }
             )
         }
+    }
+}
+
+private extension FeedCache {
+    func saveIgnoringResult(_ feed: [FeedImage]) {
+        save(feed) { _ in }
     }
 }
