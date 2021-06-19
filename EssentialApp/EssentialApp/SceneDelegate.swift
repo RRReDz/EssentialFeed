@@ -19,17 +19,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
-        
-        let url = URL(string: "https://my-json-server.typicode.com/RRReDz/EssentialFeedMockService/db")!
-        let session = URLSession(configuration: .ephemeral)
-        let client = URLSessionHTTPClient(session: session)
-        let feedLoader = RemoteFeedLoader(client: client, url: url)
-        
-        let imageLoader = RemoteFeedImageDataLoader(client: client)
-        
-        let feedViewController = FeedUIComposer.feedComposedWith(feedLoader: feedLoader, imageLoader: imageLoader)
-        
-        window?.rootViewController = feedViewController
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
