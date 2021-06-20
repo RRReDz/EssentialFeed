@@ -11,8 +11,7 @@ class EssentialAppUIAcceptanceTests: XCTestCase {
 
     func test_onLaunch_displaysRemoteFeedWhenCustomerHasConnectivity() {
         let app = XCUIApplication()
-        
-        app.launchAndWaitForExistence()
+        app.launchAndWaitForExistence(with: ["-reset"])
         
         let (feedCells, firstImage) = app.waitForFeedCellsAndFirstImageExistence()
         
@@ -22,8 +21,7 @@ class EssentialAppUIAcceptanceTests: XCTestCase {
     
     func test_onLaunch_displaysCachedRemoteFeedWhenCustomerHasNoConnectivity() {
         let onlineApp = XCUIApplication()
-        onlineApp.launchAndWaitForExistence()
-        
+        onlineApp.launchAndWaitForExistence(with: ["-reset"])
         onlineApp.waitForFeedCellsAndFirstImageExistence()
         
         let offlineApp = XCUIApplication()
