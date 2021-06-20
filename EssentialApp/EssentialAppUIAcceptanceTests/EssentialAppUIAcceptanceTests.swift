@@ -9,56 +9,59 @@ import XCTest
 
 class EssentialAppUIAcceptanceTests: XCTestCase {
 
-    func test_onLaunch_displaysRemoteFeedWhenCustomerHasConnectivity() throws {
+    func test_onLaunch_displaysRemoteFeedWhenCustomerHasConnectivity() {
         let app = XCUIApplication()
         
         app.launchAndWaitForExistence()
         
-        let (feedCells, firstImage) = try app.waitForFeedCellsAndFirstImageExistence()
+        let (feedCells, firstImage) = app.waitForFeedCellsAndFirstImageExistence()
         
         XCTAssertEqual(feedCells.count, 8)
         XCTAssert(firstImage.exists)
     }
     
-    func test_onLaunch_displaysCachedRemoteFeedWhenCustomerHasNoConnectivity() throws {
+    func test_onLaunch_displaysCachedRemoteFeedWhenCustomerHasNoConnectivity() {
         let onlineApp = XCUIApplication()
         onlineApp.launchAndWaitForExistence()
         
-        try onlineApp.waitForFeedCellsAndFirstImageExistence()
+        onlineApp.waitForFeedCellsAndFirstImageExistence()
         
         let offlineApp = XCUIApplication()
         offlineApp.launchAndWaitForExistence(with: ["-connectivity", "offline"])
         
-        let (offlineFeedCells, offlineFirstImage) = try offlineApp.waitForFeedCellsAndFirstImageExistence()
+        let (offlineFeedCells, offlineFirstImage) = offlineApp.waitForFeedCellsAndFirstImageExistence()
         
         XCTAssertEqual(offlineFeedCells.count, 8)
         XCTAssert(offlineFirstImage.exists)
+    }
+    
+    func test_onLaunch_displaysNOFeedWhenCustomerHasNoConnectivityAndNoCache() {
+        let offlineApp = XCUIApplication()
+        offlineApp.launchAndWaitForExistence(with: ["-reset", "-connectivity", "offline"])
+        
+        let (offlineFeedCells, _) = offlineApp.waitForFeedCellsAndFirstImageExistence()
+        
+        XCTAssertEqual(offlineFeedCells.count, 0)
     }
 }
 
 private extension XCUIApplication {
     typealias LaunchArguments = [String]
     
-    private static let defaultTimeout: Double = 10.0
+    private static let defaultTimeout: Double = 5.0
 
-    func launchAndWaitForExistence(with launchArguments: LaunchArguments = [], file: StaticString = #file, line: UInt = #line) {
+    func launchAndWaitForExistence(with launchArguments: LaunchArguments = []) {
         self.launchArguments = launchArguments
         launch()
-        if !waitForExistence(timeout: Self.defaultTimeout) {
-            XCTFail("Expected ui application to exist", file: file, line: line)
-        }
+        _ = waitForExistence(timeout: Self.defaultTimeout)
     }
     
     @discardableResult
-    func waitForFeedCellsAndFirstImageExistence(file: StaticString = #file, line: UInt = #line) throws -> (feedCells: [XCUIElement], firstImage: XCUIElement) {
+    func waitForFeedCellsAndFirstImageExistence() -> (feedCells: [XCUIElement], firstImage: XCUIElement) {
         let feedCells = feedImageCellsQuery
         let firstImage = imageViewQuery.firstMatch
-        let feedCellsExists = feedCells.element.waitForExistence(timeout: Self.defaultTimeout)
-        let firstImageExist = firstImage.waitForExistence(timeout: Self.defaultTimeout)
-        guard feedCellsExists && firstImageExist else {
-            XCTFail("Expected both feed cells and first image to exist", file: file, line: line)
-            throw NSError(domain: "wait for existence", code: 0)
-        }
+        _ = feedCells.element.waitForExistence(timeout: Self.defaultTimeout)
+        _ = firstImage.waitForExistence(timeout: Self.defaultTimeout)
         return (feedCells.allElementsBoundByIndex, firstImage)
     }
     

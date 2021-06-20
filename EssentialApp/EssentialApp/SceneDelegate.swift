@@ -24,9 +24,13 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let storeURL = NSPersistentContainer
             .defaultDirectoryURL()
             .appendingPathComponent("feed-store.sqlite")
-        let store = try! CoreDataFeedStore(storeURL: storeURL)
-        
         let remoteURL = URL(string: "https://my-json-server.typicode.com/RRReDz/EssentialFeedMockService/db")!
+        
+        if CommandLine.arguments.contains("-reset") {
+            try? FileManager.default.removeItem(at: storeURL)
+        }
+        
+        let store = try! CoreDataFeedStore(storeURL: storeURL)
         let remoteClient = makeRemoteClient()
         let remoteFeedLoader = RemoteFeedLoader(client: remoteClient, url: remoteURL)
         let localFeedLoader = LocalFeedLoader(store: store, currentDate: Date.init)
