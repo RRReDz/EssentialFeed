@@ -9,52 +9,64 @@ import XCTest
 
 class EssentialAppUIAcceptanceTests: XCTestCase {
 
-    func test_onLaunch_displaysRemoteFeedWhenCustomerHasConnectivity() {
+    func test_onLaunch_displaysRemoteFeedWhenCustomerHasConnectivity() throws {
         let app = XCUIApplication()
         
         app.launchAndWaitForExistence()
         
-        let feedCells = app.cells.matching(identifier: "feed-image-cell")
-        _ = feedCells.element.waitForExistence(timeout: 10)
-        XCTAssertEqual(feedCells.count, 8)
+        let (feedCells, firstImage) = try app.waitForFeedCellsAndFirstImageExistence()
         
-        let firstImage = app.images.matching(identifier: "feed-image-view").firstMatch
-        _ = firstImage.waitForExistence(timeout: 10)
+        XCTAssertEqual(feedCells.count, 8)
         XCTAssert(firstImage.exists)
     }
     
-    func test_onLaunch_displaysCachedRemoteFeedWhenCustomerHasNoConnectivity() {
+    func test_onLaunch_displaysCachedRemoteFeedWhenCustomerHasNoConnectivity() throws {
         let onlineApp = XCUIApplication()
-        onlineApp.launch()
+        onlineApp.launchAndWaitForExistence()
         
-        let onlineFeedCells = onlineApp.cells.matching(identifier: "feed-image-cell")
-        let onlineImageView = onlineApp.images.matching(identifier: "feed-image-view").firstMatch
-        _ = onlineFeedCells.element.waitForExistence(timeout: 10)
-        _ = onlineImageView.waitForExistence(timeout: 10)
+        try onlineApp.waitForFeedCellsAndFirstImageExistence()
         
         let offlineApp = XCUIApplication()
-        offlineApp.launchArguments = ["-connectivity", "offline"]
-        offlineApp.launch()
+        offlineApp.launchAndWaitForExistence(with: ["-connectivity", "offline"])
         
-        let offlineFeedCells = offlineApp.cells.matching(identifier: "feed-image-cell")
-        let offlineImageView = offlineApp.images.matching(identifier: "feed-image-view").firstMatch
-        _ = offlineFeedCells.element.waitForExistence(timeout: 10)
-        _ = offlineImageView.waitForExistence(timeout: 10)
+        let (offlineFeedCells, offlineFirstImage) = try offlineApp.waitForFeedCellsAndFirstImageExistence()
         
-        let feedCells = offlineApp.cells.matching(identifier: "feed-image-cell")
-        XCTAssertEqual(feedCells.count, 8)
-        
-        let firstImage = offlineApp.images.matching(identifier: "feed-image-view").firstMatch
-        XCTAssert(firstImage.exists)
+        XCTAssertEqual(offlineFeedCells.count, 8)
+        XCTAssert(offlineFirstImage.exists)
     }
 }
 
 private extension XCUIApplication {
     typealias LaunchArguments = [String]
-    @discardableResult
-    func launchAndWaitForExistence(with launchArguments: LaunchArguments = []) -> Bool {
+    
+    private static let defaultTimeout: Double = 10.0
+
+    func launchAndWaitForExistence(with launchArguments: LaunchArguments = [], file: StaticString = #file, line: UInt = #line) {
         self.launchArguments = launchArguments
         launch()
-        return waitForExistence(timeout: 10.0)
+        if !waitForExistence(timeout: Self.defaultTimeout) {
+            XCTFail("Expected ui application to exist", file: file, line: line)
+        }
+    }
+    
+    @discardableResult
+    func waitForFeedCellsAndFirstImageExistence(file: StaticString = #file, line: UInt = #line) throws -> (feedCells: [XCUIElement], firstImage: XCUIElement) {
+        let feedCells = feedImageCellsQuery
+        let firstImage = imageViewQuery.firstMatch
+        let feedCellsExists = feedCells.element.waitForExistence(timeout: Self.defaultTimeout)
+        let firstImageExist = firstImage.waitForExistence(timeout: Self.defaultTimeout)
+        guard feedCellsExists && firstImageExist else {
+            XCTFail("Expected both feed cells and first image to exist", file: file, line: line)
+            throw NSError(domain: "wait for existence", code: 0)
+        }
+        return (feedCells.allElementsBoundByIndex, firstImage)
+    }
+    
+    var feedImageCellsQuery: XCUIElementQuery {
+        return cells.matching(identifier: "feed-image-cell")
+    }
+    
+    var imageViewQuery: XCUIElementQuery {
+        return images.matching(identifier: "feed-image-view")
     }
 }
