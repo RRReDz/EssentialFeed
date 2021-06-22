@@ -23,7 +23,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         // If using a storyboard, the `window` property will automatically be initialized and attached to the scene.
         // This delegate does not imply the connecting scene or session are new (see `application:configurationForConnectingSceneSession` instead).
         guard let _ = (scene as? UIWindowScene) else { return }
-
+        
+        configureWindow()
+    }
+    
+    func configureWindow() {
+        
         let remoteURL = URL(string: "https://my-json-server.typicode.com/RRReDz/EssentialFeedMockService/db")!
         
         let store = try! CoreDataFeedStore(storeURL: storeURL)
@@ -34,7 +39,8 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         let remoteImageLoader = RemoteFeedImageDataLoader(client: remoteClient)
         let localImageLoader = LocalFeedImageDataLoader(store: store)
         
-        window?.rootViewController = FeedUIComposer.feedComposedWith(
+        window?.rootViewController = UINavigationController(
+            rootViewController: FeedUIComposer.feedComposedWith(
             feedLoader: FeedLoaderWithFallbackComposite(
                 primary: FeedLoaderCacheDecorator(
                     decoratee: remoteFeedLoader,
@@ -44,7 +50,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 primary: localImageLoader,
                 fallback: FeedImageDataLoaderCacheDecorator(
                     decoratee: remoteImageLoader,
-                    cache: localImageLoader)))
+                    cache: localImageLoader))))
     }
     
     func makeRemoteClient() -> HTTPClient {
