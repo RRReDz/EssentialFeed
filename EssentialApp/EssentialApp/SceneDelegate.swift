@@ -11,6 +11,19 @@ import EssentialFeed
 import EssentialFeediOS
 
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
+    
+    private lazy var httpClient: HTTPClient = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
+    private lazy var store: FeedStore & FeedImageDataStore = try! CoreDataFeedStore(storeURL: storeURL)
+    
+    convenience init(httpClient: HTTPClient, store: FeedStore & FeedImageDataStore) {
+        self.init()
+        self.httpClient = httpClient
+        self.store = store
+    }
+    
+    override init() {
+        super.init()
+    }
 
     var window: UIWindow?
 
@@ -30,13 +43,12 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     func configureWindow() {
         
         let remoteURL = URL(string: "https://my-json-server.typicode.com/RRReDz/EssentialFeedMockService/db")!
-        
-        let store = try! CoreDataFeedStore(storeURL: storeURL)
+    
         let remoteClient = makeRemoteClient()
         let remoteFeedLoader = RemoteFeedLoader(client: remoteClient, url: remoteURL)
         let localFeedLoader = LocalFeedLoader(store: store, currentDate: Date.init)
         
-        let remoteImageLoader = RemoteFeedImageDataLoader(client: remoteClient)
+        let remoteImageLoader = RemoteFeedImageDataLoader(client: httpClient)
         let localImageLoader = LocalFeedImageDataLoader(store: store)
         
         window?.rootViewController = UINavigationController(
@@ -54,7 +66,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
     
     func makeRemoteClient() -> HTTPClient {
-        return URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
+        return httpClient
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
