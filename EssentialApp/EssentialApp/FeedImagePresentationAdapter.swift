@@ -6,6 +6,7 @@
 //
 
 import EssentialFeed
+import EssentialFeediOS
 
 final class FeedImagePresentationAdapter<Image, View: FeedImageView>: FeedImageCellControllerDelegate where Image == View.Image {
     private let model: FeedImage
