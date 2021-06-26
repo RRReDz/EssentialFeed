@@ -13,7 +13,11 @@ import EssentialFeediOS
 class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     
     private lazy var httpClient: HTTPClient = URLSessionHTTPClient(session: URLSession(configuration: .ephemeral))
-    private lazy var store: FeedStore & FeedImageDataStore = try! CoreDataFeedStore(storeURL: storeURL)
+    private lazy var store: FeedStore & FeedImageDataStore =
+        try! CoreDataFeedStore(
+            storeURL: NSPersistentContainer
+                .defaultDirectoryURL()
+                .appendingPathComponent("feed-store.sqlite"))
     
     convenience init(httpClient: HTTPClient, store: FeedStore & FeedImageDataStore) {
         self.init()
@@ -26,10 +30,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
     }
 
     var window: UIWindow?
-
-    let storeURL = NSPersistentContainer
-        .defaultDirectoryURL()
-        .appendingPathComponent("feed-store.sqlite")
 
     func scene(_ scene: UIScene, willConnectTo session: UISceneSession, options connectionOptions: UIScene.ConnectionOptions) {
         // Use this method to optionally configure and attach the UIWindow `window` to the provided UIWindowScene `scene`.
@@ -44,8 +44,7 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
         
         let remoteURL = URL(string: "https://my-json-server.typicode.com/RRReDz/EssentialFeedMockService/db")!
     
-        let remoteClient = makeRemoteClient()
-        let remoteFeedLoader = RemoteFeedLoader(client: remoteClient, url: remoteURL)
+        let remoteFeedLoader = RemoteFeedLoader(client: httpClient, url: remoteURL)
         let localFeedLoader = LocalFeedLoader(store: store, currentDate: Date.init)
         
         let remoteImageLoader = RemoteFeedImageDataLoader(client: httpClient)
@@ -63,10 +62,6 @@ class SceneDelegate: UIResponder, UIWindowSceneDelegate {
                 fallback: FeedImageDataLoaderCacheDecorator(
                     decoratee: remoteImageLoader,
                     cache: localImageLoader))))
-    }
-    
-    func makeRemoteClient() -> HTTPClient {
-        return httpClient
     }
 
     func sceneDidDisconnect(_ scene: UIScene) {
