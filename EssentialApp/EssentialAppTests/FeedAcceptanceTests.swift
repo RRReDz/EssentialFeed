@@ -74,31 +74,6 @@ class FeedAcceptanceTests: XCTestCase {
         sut.sceneWillResignActive(UIApplication.shared.connectedScenes.first!)
     }
     
-    private class HTTPClientStub: HTTPClient {
-        private let stub: (URL) -> (HTTPClient.Result)
-        
-        init(stub: @escaping (URL) -> HTTPClient.Result) {
-            self.stub = stub
-        }
-        
-        private class Task: HTTPClientTask {
-            func cancel() {}
-        }
-        
-        func get(from url: URL, completion: @escaping (HTTPClient.Result) -> Void) -> HTTPClientTask {
-            completion(stub(url))
-            return Task()
-        }
-        
-        static var offline: HTTPClientStub {
-            return HTTPClientStub(stub: { _ in .failure(anyNSError())})
-        }
-        
-        static func online(_ stub: @escaping (URL) -> (HTTPURLResponse, Data)) -> HTTPClientStub {
-            return HTTPClientStub(stub: { url in .success(stub(url))})
-        }
-    }
-    
     private class InMemoryFeedStore: FeedStore, FeedImageDataStore {
         typealias CachedFeed = (feed: [LocalFeedImage], timestamp: Date)
         
