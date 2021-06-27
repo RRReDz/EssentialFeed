@@ -14,7 +14,7 @@ public protocol FeedControllerDelegate {
 
 public final class FeedViewController: UITableViewController, UITableViewDataSourcePrefetching {
     
-    private let delegate: FeedControllerDelegate
+    private let delegate: FeedControllerDelegate?
     
     public let errorView = ErrorView()
     
@@ -28,7 +28,8 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     required init?(coder: NSCoder) {
-        fatalError("init(coder:) has not been implemented")
+        self.delegate = nil
+        super.init(coder: coder)
     }
     
     override public func viewDidLoad() {
@@ -37,7 +38,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     }
     
     @IBAction private func refresh() {
-        delegate.didRequestFeedRefresh()
+        delegate?.didRequestFeedRefresh()
     }
     
     public override func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
