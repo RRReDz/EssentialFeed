@@ -16,7 +16,7 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     
     private let delegate: FeedControllerDelegate?
     
-    public let errorView = ErrorView()
+    @IBOutlet public var errorView: ErrorView?
     
     private var tableModel = [FeedImageCellController]() {
         didSet { tableView.reloadData() }
@@ -35,6 +35,11 @@ public final class FeedViewController: UITableViewController, UITableViewDataSou
     override public func viewDidLoad() {
         super.viewDidLoad()
         refresh()
+    }
+    
+    public override func viewDidLayoutSubviews() {
+        super.viewDidLayoutSubviews()
+        tableView.sizeTableHeaderToFit()
     }
     
     @IBAction private func refresh() {
@@ -88,6 +93,10 @@ extension FeedViewController: FeedLoadingView {
 
 extension FeedViewController: FeedErrorView {
     public func display(_ viewModel: FeedErrorViewModel) {
-        errorView.message = viewModel.errorMessage
+        if let errorMessage = viewModel.errorMessage {
+            errorView?.show(message:errorMessage)
+        } else {
+            errorView?.hideMessage()
+        }
     }
 }

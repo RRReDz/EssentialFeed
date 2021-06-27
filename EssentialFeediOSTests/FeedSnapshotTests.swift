@@ -27,6 +27,15 @@ class FeedSnapshotTests: XCTestCase {
         record(snapshot: sut.snapshot(), named: "FEED_WITH_CONTENT")
     }
     
+    func test_feedWithErrorMessage() {
+        let sut = makeSUT()
+        
+        sut.display(.error(message: "This is\na multiline error\nmessage"))
+        
+        record(snapshot: sut.snapshot(), named: "FEED_WITH_ERROR_MESSAGE")
+    }
+    
+    
     private func makeSUT() -> FeedViewController {
         let bundle = Bundle(for: FeedViewController.self)
         let storyboard = UIStoryboard(name: "Feed", bundle: bundle)
@@ -104,6 +113,12 @@ private extension UIViewController {
         return renderer.image { action in
             view.layer.render(in: action.cgContext)
         }
+    }
+}
+
+private extension FeedErrorViewModel {
+    static func error(message: String) -> FeedErrorViewModel {
+        return FeedErrorViewModel(errorMessage: message)
     }
 }
 

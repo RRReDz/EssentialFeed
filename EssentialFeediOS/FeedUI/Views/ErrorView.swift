@@ -8,5 +8,26 @@
 import UIKit
 
 public final class ErrorView: UIView {
-    public var message: String?
+    @IBOutlet private var messageLabel: UILabel?
+    
+    public var message: String? {
+        !isHidden ? messageLabel?.text : nil
+    }
+    
+    public override func awakeFromNib() {
+        super.awakeFromNib()
+        
+        messageLabel?.text = nil
+        isHidden = true
+    }
+    
+    func show(message: String) {
+        messageLabel?.text = message
+        isHidden = false
+    }
+    
+    func hideMessage() {
+        messageLabel?.text = nil
+        isHidden = true
+    }
 }
