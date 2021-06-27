@@ -35,6 +35,13 @@ class FeedSnapshotTests: XCTestCase {
         record(snapshot: sut.snapshot(), named: "FEED_WITH_ERROR_MESSAGE")
     }
     
+    func test_feedWithFailedImageLoading() {
+        let sut = makeSUT()
+        
+        sut.display(feedWithFailedImageLoading())
+        
+        record(snapshot: sut.snapshot(), named: "FEED_WITH_FAILED_IMAGE_LOADING")
+    }
     
     private func makeSUT() -> FeedViewController {
         let bundle = Bundle(for: FeedViewController.self)
@@ -85,13 +92,28 @@ class FeedSnapshotTests: XCTestCase {
         ]
     }
     
+    private func feedWithFailedImageLoading() -> [ImageStub] {
+        return [
+            ImageStub(
+                description: nil,
+                location: "East Side Gallery\nMemorial in Berlin, Germany",
+                image: nil
+            ),
+            ImageStub(
+                description: "Garth Pier is a Grade II listed structure in Bangor, Gwynedd, North Wales.",
+                location: "Garth Pier",
+                image: nil
+            )
+        ]
+    }
+    
 }
 
 private class ImageStub: FeedImageCellControllerDelegate {
     private let viewModel: FeedImageViewModel<UIImage>
     weak var controller: FeedImageCellController?
     
-    init(description: String, location: String, image: UIImage?) {
+    init(description: String?, location: String?, image: UIImage?) {
         viewModel = FeedImageViewModel(
             location: location,
             description: description,
