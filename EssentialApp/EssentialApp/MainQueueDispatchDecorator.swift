@@ -5,8 +5,8 @@
 //  Created by Riccardo Rossi - Home on 02/05/21.
 //
 
-import EssentialFeed
 import Foundation
+import EssentialFeed
 
 final class MainQueueDispatchDecorator<T> {
     private let decoratee: T
@@ -20,14 +20,6 @@ final class MainQueueDispatchDecorator<T> {
             return DispatchQueue.main.async(execute: completion)
         }
         completion()
-    }
-}
-
-extension MainQueueDispatchDecorator: FeedLoader where T == FeedLoader {
-    func load(completion: @escaping (Result<[FeedImage], Error>) -> Void) {
-        decoratee.load { [weak self] result in
-            self?.dispatch { completion(result) }
-        }
     }
 }
 
