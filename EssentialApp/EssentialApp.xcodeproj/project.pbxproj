@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		7317D2E626ADE2950020B310 /* CombineHelpers.swift in Sources */ = {isa = PBXBuildFile; fileRef = 7317D2E526ADE2950020B310 /* CombineHelpers.swift */; };
 		731BAF7C267AB0E0009FE97A /* XCTestCase+MemoryLeakTrackingHelper.swift in Sources */ = {isa = PBXBuildFile; fileRef = 731BAF7B267AB0E0009FE97A /* XCTestCase+MemoryLeakTrackingHelper.swift */; };
 		735E3BD4268280AD0009D04A /* SceneDelegateTests.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735E3BD3268280AD0009D04A /* SceneDelegateTests.swift */; };
 		735E3BDD2682888F0009D04A /* WeakRefVirtualProxy.swift in Sources */ = {isa = PBXBuildFile; fileRef = 735E3BD72682888F0009D04A /* WeakRefVirtualProxy.swift */; };
@@ -70,6 +71,7 @@
 /* End PBXCopyFilesBuildPhase section */
 
 /* Begin PBXFileReference section */
+		7317D2E526ADE2950020B310 /* CombineHelpers.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = CombineHelpers.swift; sourceTree = "<group>"; };
 		731BAF7B267AB0E0009FE97A /* XCTestCase+MemoryLeakTrackingHelper.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = "XCTestCase+MemoryLeakTrackingHelper.swift"; sourceTree = "<group>"; };
 		735E3BD3268280AD0009D04A /* SceneDelegateTests.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = SceneDelegateTests.swift; sourceTree = "<group>"; };
 		735E3BD72682888F0009D04A /* WeakRefVirtualProxy.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = WeakRefVirtualProxy.swift; sourceTree = "<group>"; };
@@ -205,6 +207,7 @@
 				735E3BDA2682888F0009D04A /* FeedLoaderPresentationAdapter.swift */,
 				735E3BDB2682888F0009D04A /* FeedImagePresentationAdapter.swift */,
 				735E3BDC2682888F0009D04A /* FeedViewAdapter.swift */,
+				7317D2E526ADE2950020B310 /* CombineHelpers.swift */,
 				73BEB7A426750D10001D4C6B /* Assets.xcassets */,
 				73BEB7A626750D10001D4C6B /* LaunchScreen.storyboard */,
 				73BEB7A126750D0F001D4C6B /* Main.storyboard */,
@@ -343,6 +346,7 @@
 			files = (
 				73BEB7A026750D0F001D4C6B /* ViewController.swift in Sources */,
 				73BEB79C26750D0F001D4C6B /* AppDelegate.swift in Sources */,
+				7317D2E626ADE2950020B310 /* CombineHelpers.swift in Sources */,
 				735E3BE22682888F0009D04A /* FeedImagePresentationAdapter.swift in Sources */,
 				735E3BE02682888F0009D04A /* FeedViewAdapter.swift in Sources */,
 				735E3BE12682888F0009D04A /* FeedUIComposer.swift in Sources */,
